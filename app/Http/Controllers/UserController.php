@@ -49,7 +49,6 @@ class UserController extends Controller
                 'sendalmemail' => 1,
                 'sendreport' => 1,
                 'announcement' => 1,
-                'mail_conf' => 1,
                 'user_type' => 1,
                 'created_by' => 1,
             ]);
@@ -149,7 +148,7 @@ class UserController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = User::with(['children', 'children.children', 'children.children.children'])->where('user_id', $request->user()->user_id)->get();
+            $result = $request->user()->load(['children', 'children.children', 'children.children.sites', 'children.children.sites.printers']);
             return Response([
                 'status' => true,
                 'data' => $result,
@@ -170,7 +169,7 @@ class UserController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = User::with(['children', 'children.children'])->where('user_id', $request->user()->user_id)->get();
+            $result = $request->user()->load(['children', 'children.sites', 'children.sites.printers']);
             return Response([
                 'status' => true,
                 'data' => $result,
@@ -191,7 +190,7 @@ class UserController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = User::with(['children'])->where('user_id', $request->user()->user_id)->get();
+            $result = $request->user()->load(['sites', 'sites.printers']);
             return Response([
                 'status' => true,
                 'data' => $result,

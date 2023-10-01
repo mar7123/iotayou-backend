@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -36,7 +37,6 @@ class User extends Authenticatable
         'sendalmemail',
         'sendreport',
         'announcement',
-        'mail_conf',
         'user_type',
         'status',
         'created_by',
@@ -62,5 +62,8 @@ class User extends Authenticatable
     public function parent(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')->using(ParentChild::class);
+    }
+    public function sites() : HasMany {
+        return $this->hasMany(Site::class, 'customer_id', 'user_id');
     }
 }

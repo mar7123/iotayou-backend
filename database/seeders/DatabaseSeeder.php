@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call(UserGroupsSeeder::class);
         $this->call(UserSeeder::class);
-        // $this->call(ParentChildSeeder::class);
+        $this->call(SiteSeeder::class);
+        $this->call(PrinterSeeder::class);
     }
 }

@@ -34,7 +34,7 @@ return new class extends Migration
             $table->tinyInteger('sendalmemail')->default(0);
             $table->tinyInteger('sendreport')->default(0);
             $table->tinyInteger('announcement')->default(1);
-            $table->tinyInteger('mail_conf')->default(0);
+            $table->timestamp('email_verified_at')->nullable();
             $table->integer('user_type');
             $table->foreign('user_type')->references('user_group_id')->on('user_groups');
             $table->smallInteger('status')->default(6);

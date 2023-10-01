@@ -23,8 +23,8 @@ class UserFactory extends Factory
         $salt = Str::random(10);
         $user_type = fake()->numberBetween(1, User::max('user_type'));
         $user_type = $user_type + 1;
-        if ($user_type > 4) {
-            $user_type = 4;
+        if ($user_type > 3) {
+            $user_type = 3;
         }
         $passw = UserGroups::select('group_code')->where('user_group_id', $user_type)->first();
         return [

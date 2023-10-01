@@ -14,11 +14,11 @@ class UserSeeder extends Seeder
     {
         $saltstr = Str::random(10);
         \App\Models\User::create([
-            'username' => 'bigoof1928',
-            'full_name' => 'Big Oof',
-            'email' => 'bigoof.1928@email.com',
+            'username' => 'admin123',
+            'full_name' => 'Admin Admin',
+            'email' => 'admin123@email.com',
             'phone_num' => '081188888888',
-            'pic' => 'Biggie',
+            'pic' => 'Admin',
             'address' => 'Saturnus Raya',
             'salt' => $saltstr,
             'password' => bcrypt('admin123' . $saltstr),
