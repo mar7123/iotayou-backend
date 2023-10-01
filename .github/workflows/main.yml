@@ -16,5 +16,5 @@ jobs:
       with:
         server: iotaroundyou.my.id
         username: iotayou
-        server-dir: home/iotayou/laravel/dev/
+        server-dir: laravel/dev/
         password: ${{ secrets.PASSWORD }}
