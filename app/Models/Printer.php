@@ -17,7 +17,7 @@ class Printer extends Model
         "site_id",
         "code",
         "name",
-        "instrument",
+        "instrument_id",
         "ip_addr",
         "printer_port",
         "image",
@@ -35,5 +35,8 @@ class Printer extends Model
 
     public function sites() : BelongsTo {
         return $this->belongsTo(Site::class, "site_id", "site_id");
+    }
+    public function instruments() : BelongsTo {
+        return $this->belongsTo(Instrument::class, "instrument_id", "instrument_id");
     }
 }

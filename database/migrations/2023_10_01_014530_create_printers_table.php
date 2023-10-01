@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreign('site_id')->references('site_id')->on('sites');
             $table->string('code', 100);
             $table->string('name', 100);
-            $table->string('instrument', 100);
+            $table->integer('instrument_id');
+            $table->foreign('instrument_id')->references('instrument_id')->on('instruments');
             $table->string('ip_addr', 15);
             $table->smallInteger('printer_port');
             $table->string('image', 100)->nullable();

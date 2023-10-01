@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Instrument;
 use App\Models\Site;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,7 +22,7 @@ class PrinterFactory extends Factory
             "site_id" => fake()->randomElement(Site::pluck('site_id')),
             "code" => fake()->firstName(),
             "name" => "Printer " . fake()->name(),
-            "instrument" => "D320i",
+            "instrument_id" => fake()->randomElement(Instrument::pluck('instrument_id')),
             "ip_addr" => "192.168." . fake()->numberBetween(0, 255) . "." . fake()->numberBetween(0, 255),
             "printer_port" => 2000,
             "status" => 6,
