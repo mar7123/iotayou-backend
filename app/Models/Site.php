@@ -31,10 +31,12 @@ class Site extends Model
     public $incrementing = true;
     public $timestamps = true;
 
-    public function customers() : BelongsTo {
+    public function customers(): BelongsTo
+    {
         return $this->belongsTo(User::class, "customer_id", "user_id");
     }
-    public function printers() : HasMany {
+    public function printers(): HasMany
+    {
         return $this->hasMany(Printer::class, "site_id", "site_id");
     }
 }

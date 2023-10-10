@@ -27,7 +27,8 @@ class Instrument extends Model
     public $incrementing = true;
     public $timestamps = true;
 
-    public function printers() : HasMany {
+    public function printers(): HasMany
+    {
         return $this->hasMany(Printer::class, "instrument_id", "instrument_id");
     }
 }

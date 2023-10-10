@@ -33,10 +33,12 @@ class Printer extends Model
     public $incrementing = true;
     public $timestamps = true;
 
-    public function sites() : BelongsTo {
+    public function sites(): BelongsTo
+    {
         return $this->belongsTo(Site::class, "site_id", "site_id");
     }
-    public function instruments() : BelongsTo {
+    public function instruments(): BelongsTo
+    {
         return $this->belongsTo(Instrument::class, "instrument_id", "instrument_id");
     }
 }

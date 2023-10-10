@@ -1,8 +1,7 @@
 <?php
 
+use App\Http\Controllers\PrinterController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\TryoutPKGController;
-use App\Http\Controllers\UserPKGController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,10 +24,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         return $request->user();
     });
     Route::post('/user/update', [UserController::class, 'updateUser']);
+    Route::get('/logout', [UserController::class, 'logout']);
+
+    // User Children
     Route::get('/user/admin/children', [UserController::class, 'getAdminChildren']);
     Route::get('/user/client/children', [UserController::class, 'getClientChildren']);
     Route::get('/user/customer/children', [UserController::class, 'getCustomerChildren']);
-    Route::get('/logout', [UserController::class, 'logout']);
+
+    // Devices
+    Route::get('/user/devicelist', [PrinterController::class, 'deviceList']);
 });
 // Route::middleware('auth:sanctum')->post('/auth/register', [UserController::class, 'createUser']);
 Route::post('auth/register', [UserController::class, 'createUser']);

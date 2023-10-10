@@ -63,7 +63,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')->using(ParentChild::class);
     }
-    public function sites() : HasMany {
+    public function sites(): HasMany
+    {
         return $this->hasMany(Site::class, 'customer_id', 'user_id');
     }
 }
