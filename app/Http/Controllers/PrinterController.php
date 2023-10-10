@@ -23,6 +23,12 @@ class PrinterController extends Controller
                         }
                     }
                 }
+                activity()
+                    ->causedBy($parent)
+                    ->performedOn($result->first())
+                    ->withProperties($result)
+                    ->event('retrieved')
+                    ->log('listed devices');
                 return Response([
                     'status' => true,
                     'data' => $result,
@@ -37,6 +43,12 @@ class PrinterController extends Controller
                         }
                     }
                 }
+                activity()
+                    ->causedBy($parent)
+                    ->performedOn($result->first())
+                    ->withProperties($result)
+                    ->event('retrieved')
+                    ->log('listed devices');
                 return Response([
                     'status' => true,
                     'data' => $result,
@@ -49,6 +61,12 @@ class PrinterController extends Controller
                         $result->push($pr);
                     }
                 }
+                activity()
+                    ->causedBy($parent)
+                    ->performedOn($result->first())
+                    ->withProperties($result)
+                    ->event('retrieved')
+                    ->log('listed devices');
                 return Response([
                     'status' => true,
                     'data' => $result,

@@ -89,6 +89,10 @@ class UserController extends Controller
                 $expiry->modify('+30 minutes');
                 $user = User::where('email', $request->email)->first();
                 $success =  $user->createToken('User Token', ['*'], $expiry)->plainTextToken;
+                activity()
+                    ->causedBy($user)
+                    ->event('logged in')
+                    ->log('logged in');
                 return Response([
                     'status' => true,
                     'message' => 'User logged in successfully',
@@ -206,6 +210,10 @@ class UserController extends Controller
     {
         try {
             $request->user()->tokens()->delete();
+            activity()
+                    ->causedBy($request->user())
+                    ->event('logged out')
+                    ->log('logged out');
             return Response(['data' => 'User Logout successfully.'], 200);
         } catch (Throwable $th) {
             return Response([
