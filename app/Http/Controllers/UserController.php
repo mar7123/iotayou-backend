@@ -247,21 +247,22 @@ class UserController extends Controller
     public function getCustomers(Request $request): Response
     {
         try {
-            if ($request->user()->user_type > 2) {
-                return Response([
-                    'status' => false,
-                    'data' => 'Unauthorized',
-                ], 401);
-            }
-            $result = $request->user()->children()->get();
-            if ($request->user()->user_type == 1) {
-                $adm = new Collection();
-                foreach ($result as $rs) {
-                    $temp = $rs->children()->get();
-                    $adm = $adm->concat($temp);
-                }
-                $result = $adm;
-            }
+            // if ($request->user()->user_type > 2) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
+            // $result = $request->user()->children()->get();
+            // if ($request->user()->user_type == 1) {
+            //     $adm = new Collection();
+            //     foreach ($result as $rs) {
+            //         $temp = $rs->children()->get();
+            //         $adm = $adm->concat($temp);
+            //     }
+            //     $result = $adm;
+            // }
+            $result = User::where('user_type', 3)->get();
             return Response([
                 'status' => true,
                 'data' => $result,
