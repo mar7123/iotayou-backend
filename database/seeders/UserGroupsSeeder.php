@@ -15,26 +15,22 @@ class UserGroupsSeeder extends Seeder
             'Super Admin',
             'Client',
             'Customer',
-            'Site',
         ];
         $icon = [
             'admin.png',
             'prod_man.png',
             'main_man.png',
             'prod_sup.png',
-            'prod_sud.png'
         ];
         $page1st = [
             '/dashboard',
             '/dashboard',
             '/dashboard',
-            '/dashboard'
         ];
         $group_code = [
             'sa',
             'cl',
             'cu',
-            'si'
         ];
         \App\Models\UserGroups::factory()
             ->count(count($name))

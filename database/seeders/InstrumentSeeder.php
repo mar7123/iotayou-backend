@@ -12,6 +12,6 @@ class InstrumentSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Instrument::factory(5)->create();
+        // \App\Models\Instrument::factory(5)->create();
     }
 }

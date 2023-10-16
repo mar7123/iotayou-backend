@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sites', function (Blueprint $table) {
             $table->integer('site_id')->autoIncrement();
             $table->uuid('customer_id')->nullable();
-            $table->foreign('customer_id')->references('user_id')->on('users');
+            $table->foreign('customer_id')->references('user_id')->on('users')->nullOnDelete();
             $table->string('code', 100);
             $table->string('name', 100);
             $table->text('address', 100);

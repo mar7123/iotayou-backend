@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Instrument extends Model
@@ -14,6 +15,7 @@ class Instrument extends Model
     protected $primaryKey = "instrument_id";
     protected $keyType = "integer";
     protected $fillable = [
+        "printer_id",
         "code",
         "name",
         "brand",
@@ -27,8 +29,8 @@ class Instrument extends Model
     public $incrementing = true;
     public $timestamps = true;
 
-    public function printers(): HasMany
+    public function printers(): BelongsTo
     {
-        return $this->hasMany(Printer::class, "instrument_id", "instrument_id");
+        return $this->belongsTo(Printer::class, "printer_id", "printer_id");
     }
 }

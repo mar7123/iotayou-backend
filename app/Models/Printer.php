@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Printer extends Model
 {
@@ -17,7 +18,6 @@ class Printer extends Model
         "site_id",
         "code",
         "name",
-        "instrument_id",
         "ip_addr",
         "printer_port",
         "image",
@@ -37,8 +37,12 @@ class Printer extends Model
     {
         return $this->belongsTo(Site::class, "site_id", "site_id");
     }
-    public function instruments(): BelongsTo
+    public function instruments(): HasMany
     {
-        return $this->belongsTo(Instrument::class, "instrument_id", "instrument_id");
+        return $this->hasMany(Printer::class, "printer_id", "printer_id");
+    }
+    public function alarms(): HasMany
+    {
+        return $this->hasMany(Alarm::class, 'printer_id', 'printer_id');
     }
 }

@@ -20,7 +20,6 @@ class SiteFactory extends Factory
         $lat = fake()->latitude(-8, -5);
         $long = fake()->longitude(105, 114);
         return [
-            "customer_id" => fake()->randomElement(User::where('user_type', 3)->pluck('user_id')),
             "code" => fake()->firstName(),
             "name" => fake()->name(),
             "address" => fake()->address(),

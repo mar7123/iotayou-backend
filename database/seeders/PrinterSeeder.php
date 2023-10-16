@@ -12,6 +12,6 @@ class PrinterSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Printer::factory(30)->create();
+        // \App\Models\Printer::factory(30)->create();
     }
 }

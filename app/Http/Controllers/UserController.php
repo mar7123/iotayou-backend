@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use DateTime;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -19,13 +20,12 @@ class UserController extends Controller
         try {
             $validateUser = Validator::make($request->all(), [
                 'username' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
+                'full_name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'phone_num' => 'required',
-                'password' => 'required',
                 'address' => 'required',
-                'birth_date' => 'required|date',
+                'password' => 'required',
+                'user_type' => 'required',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -37,24 +37,17 @@ class UserController extends Controller
             $salt = Str::random(10);
             $user = User::create([
                 'username' => $request->username,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
+                'full_name' => $request->full_name,
                 'email' => $request->email,
                 'phone_num' => $request->phone_num,
-                'salt' => $salt,
-                'password' => Hash::make($request->password . $salt),
                 'address' => $request->address,
-                'birth_date' => $request->birth_date,
-                'sendalmsms' => 1,
-                'sendalmemail' => 1,
-                'sendreport' => 1,
-                'announcement' => 1,
-                'user_type' => 1,
-                'created_by' => 1,
+                'salt' => $salt,
+                'password' => $request->password,
+                'user_type' => $request->user_type,
             ]);
             return Response([
                 'status' => true,
-                'message' => 'User created successfully',
+                'message' => 'Created successfully',
             ], 201);
         } catch (Throwable $th) {
             return Response([
@@ -110,18 +103,105 @@ class UserController extends Controller
             ], 500);
         }
     }
+    public function newReg(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'username' => 'required',
+                'full_name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'phone_num' => 'required',
+                'address' => 'required',
+                'password' => 'required',
+                'user_type' => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            if ($request->user()->user_type >= $request->user_type) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $salt = Str::random(10);
+            $user = User::create([
+                'username' => $request->username,
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'phone_num' => $request->phone_num,
+                'address' => $request->address,
+                'salt' => $salt,
+                'password' => $request->password,
+                'user_type' => $request->user_type,
+            ]);
+            return Response([
+                'status' => true,
+                'message' => 'Created successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function updateReg(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'user_id' => 'required',
+                'username' => 'required',
+                'full_name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'phone_num' => 'required',
+                'address' => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            if ($request->user()->user_type >= $request->user_type) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $reg = User::where('user_id', $request->user_id)->first();
+            $reg->update([
+                'username' => $request->username,
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'phone_num' => $request->phone_num,
+                'address' => $request->address,
+            ]);
+            return Response([
+                'status' => true,
+                'message' => 'updated successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
     public function updateUser(Request $request): Response
     {
         try {
             $validateUser = Validator::make($request->all(), [
                 'username' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
+                'full_name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'phone_num' => 'required',
-                'password' => 'required',
                 'address' => 'required',
-                'birth_date' => 'required|date',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -134,7 +214,7 @@ class UserController extends Controller
             $user->update($request->all());
             return Response([
                 'status' => true,
-                'message' => 'profile updated'
+                'message' => 'updated successfully'
             ], 200);
         } catch (Throwable $th) {
             return Response([
@@ -143,16 +223,16 @@ class UserController extends Controller
             ], 500);
         }
     }
-    public function getAdminChildren(Request $request): Response
+    public function getClients(Request $request): Response
     {
         try {
-            if ($request->user()->user_type != 1) {
+            if ($request->user()->user_type > 1) {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = $request->user()->load(['children', 'children.children', 'children.children.sites', 'children.children.sites.printers']);
+            $result = $request->user()->children()->get();
             return Response([
                 'status' => true,
                 'data' => $result,
@@ -164,37 +244,24 @@ class UserController extends Controller
             ], 500);
         }
     }
-    public function getClientChildren(Request $request): Response
+    public function getCustomers(Request $request): Response
     {
         try {
-            if ($request->user()->user_type != 2) {
+            if ($request->user()->user_type > 2) {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = $request->user()->load(['children', 'children.sites', 'children.sites.printers']);
-            return Response([
-                'status' => true,
-                'data' => $result,
-            ], 200);
-        } catch (Throwable $th) {
-            return Response([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-    public function getCustomerChildren(Request $request): Response
-    {
-        try {
-            if ($request->user()->user_type != 3) {
-                return Response([
-                    'status' => false,
-                    'data' => 'Unauthorized',
-                ], 401);
+            $result = $request->user()->children()->get();
+            if ($request->user()->user_type == 1) {
+                $adm = new Collection();
+                foreach ($result as $rs) {
+                    $temp = $rs->children()->get();
+                    $adm = $adm->concat($temp);
+                }
+                $result = $adm;
             }
-            $result = $request->user()->load(['sites', 'sites.printers']);
             return Response([
                 'status' => true,
                 'data' => $result,
@@ -211,9 +278,9 @@ class UserController extends Controller
         try {
             $request->user()->tokens()->delete();
             activity()
-                    ->causedBy($request->user())
-                    ->event('logged out')
-                    ->log('logged out');
+                ->causedBy($request->user())
+                ->event('logged out')
+                ->log('logged out');
             return Response(['data' => 'User Logout successfully.'], 200);
         } catch (Throwable $th) {
             return Response([

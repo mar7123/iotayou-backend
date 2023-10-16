@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PrinterController;
+use App\Http\Controllers\SiteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,12 +25,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         return $request->user();
     });
     Route::post('/user/update', [UserController::class, 'updateUser']);
+    Route::post('/user/newreg', [UserController::class, 'newReg']);
     Route::get('/logout', [UserController::class, 'logout']);
 
     // User Children
-    Route::get('/user/admin/children', [UserController::class, 'getAdminChildren']);
-    Route::get('/user/client/children', [UserController::class, 'getClientChildren']);
-    Route::get('/user/customer/children', [UserController::class, 'getCustomerChildren']);
+    Route::get('/clients', [UserController::class, 'getClients']);
+    Route::get('/customers', [UserController::class, 'getCustomers']);
+
+    // Sites
+    Route::get('/sites', [SiteController::class, 'getSites']);
 
     // Devices
     Route::get('/user/devicelist', [PrinterController::class, 'deviceList']);

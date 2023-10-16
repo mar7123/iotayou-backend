@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGroupsSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(SiteSeeder::class);
-        $this->call(InstrumentSeeder::class);
-        $this->call(PrinterSeeder::class);
+        // $this->call(PrinterSeeder::class);
+        // $this->call(InstrumentSeeder::class);
     }
 }
