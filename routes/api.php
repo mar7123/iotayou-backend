@@ -24,10 +24,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         $request->user()->tokens()->update(['expires_at' => $expiry]);
         return $request->user();
     });
-    Route::post('/user/update', [UserController::class, 'updateUser']);
-    Route::post('/user/newreg', [UserController::class, 'newReg']);
     Route::get('/logout', [UserController::class, 'logout']);
-
+    
     // User Children
     Route::get('/clients', [UserController::class, 'getClients']);
     
@@ -39,5 +37,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 });
 // Route::middleware('auth:sanctum')->post('/auth/register', [UserController::class, 'createUser']);
 Route::get('/customers', [UserController::class, 'getCustomers']);
+Route::post('/user/update', [UserController::class, 'updateUser']);
+Route::post('/user/newreg', [UserController::class, 'newReg']);
+Route::post('/user/deletereg', [UserController::class, 'deleteReg']);
+
 Route::post('auth/register', [UserController::class, 'createUser']);
 Route::post('auth/login', [UserController::class, 'loginUser']);

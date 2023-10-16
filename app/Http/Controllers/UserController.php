@@ -122,12 +122,12 @@ class UserController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            if ($request->user()->user_type >= $request->user_type) {
-                return Response([
-                    'status' => false,
-                    'data' => 'Unauthorized',
-                ], 401);
-            }
+            // if ($request->user()->user_type >= $request->user_type) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
             $salt = Str::random(10);
             $user = User::create([
                 'username' => $request->username,
@@ -168,12 +168,12 @@ class UserController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            if ($request->user()->user_type >= $request->user_type) {
-                return Response([
-                    'status' => false,
-                    'data' => 'Unauthorized',
-                ], 401);
-            }
+            // if ($request->user()->user_type >= $request->user_type) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
             $reg = User::where('user_id', $request->user_id)->first();
             $reg->update([
                 'username' => $request->username,
@@ -185,6 +185,44 @@ class UserController extends Controller
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteReg(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'user_id' => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            // if ($request->user()->user_type >= $request->user_type) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
+            $reg = User::where('user_id', $request->user_id)->first();
+            if ($reg == null) {
+                return Response([
+                    'status' => false,
+                    'data' => 'User not found',
+                ], 401);
+            }
+            $reg->delete();
+            return Response([
+                'status' => true,
+                'message' => 'deleted successfully',
             ], 201);
         } catch (Throwable $th) {
             return Response([
