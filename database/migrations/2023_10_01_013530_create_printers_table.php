@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('printers', function (Blueprint $table) {
             $table->integer('printer_id')->autoIncrement();
             $table->integer('site_id');
-            $table->foreign('site_id')->references('site_id')->on('sites')->nullOnDelete();
+            $table->foreign('site_id')->references('site_id')->on('sites');
             $table->string('code', 100);
             $table->string('name', 100);
             $table->string('ip_addr', 15);
