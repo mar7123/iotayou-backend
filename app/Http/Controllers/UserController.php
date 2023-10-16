@@ -155,11 +155,6 @@ class UserController extends Controller
         try {
             $validateUser = Validator::make($request->all(), [
                 'user_id' => 'required',
-                'username' => 'required',
-                'full_name' => 'required',
-                'email' => 'required|email|unique:users,email',
-                'phone_num' => 'required',
-                'address' => 'required',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -175,13 +170,7 @@ class UserController extends Controller
             //     ], 401);
             // }
             $reg = User::where('user_id', $request->user_id)->first();
-            $reg->update([
-                'username' => $request->username,
-                'full_name' => $request->full_name,
-                'email' => $request->email,
-                'phone_num' => $request->phone_num,
-                'address' => $request->address,
-            ]);
+            $reg->update($request->except(['user_id']));
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
