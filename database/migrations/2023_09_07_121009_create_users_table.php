@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('user_id')->primary();
-            $table->string('username', 30);
+            $table->string('code', 30);
             $table->string('full_name', 60);
             $table->string('email', 100)->unique();
             $table->string('phone_num', 20);

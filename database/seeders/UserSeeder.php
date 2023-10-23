@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     {
         $saltstr = Str::random(10);
         \App\Models\User::create([
-            'username' => 'admin123',
+            'code' => 'admin123',
             'full_name' => 'Admin Admin',
             'email' => 'admin123@email.com',
             'phone_num' => '081188888888',

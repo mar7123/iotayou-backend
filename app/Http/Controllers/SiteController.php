@@ -32,7 +32,7 @@ class SiteController extends Controller
             }
             return Response([
                 'status' => true,
-                'data' => count($st),
+                'data' => $st,
             ], 200);
         } catch (Throwable $th) {
             return Response([

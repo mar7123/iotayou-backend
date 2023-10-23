@@ -28,7 +28,7 @@ class UserFactory extends Factory
         }
         $passw = UserGroups::select('group_code')->where('user_group_id', $user_type)->first();
         return [
-            'username' => fake()->userName(),
+            'code' => fake()->userName(),
             'full_name' => fake()->name(),
             'email' => fake()->safeEmail(),
             'phone_num' => fake()->phoneNumber(),

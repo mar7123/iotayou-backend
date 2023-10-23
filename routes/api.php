@@ -26,21 +26,21 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::post('/user/update', [UserController::class, 'updateUser']);
     Route::get('/logout', [UserController::class, 'logout']);
+
+    Route::post('/user/newreg', [UserController::class, 'newClientCust']);
+    Route::post('/user/updatereg', [UserController::class, 'updateClientCust']);
+    Route::post('/user/deletereg', [UserController::class, 'deleteClientCust']);
     
     // User Children
     Route::get('/clients', [UserController::class, 'getClients']);
-    
+    Route::get('/customers', [UserController::class, 'getCustomers']);
+
     // Sites
     Route::get('/sites', [SiteController::class, 'getSites']);
-    
+
     // Devices
     Route::get('/user/devicelist', [PrinterController::class, 'deviceList']);
 });
 // Route::middleware('auth:sanctum')->post('/auth/register', [UserController::class, 'createUser']);
-Route::get('/customers', [UserController::class, 'getCustomers']);
-Route::post('/user/updatereg', [UserController::class, 'updateReg']);
-Route::post('/user/newreg', [UserController::class, 'newReg']);
-Route::post('/user/deletereg', [UserController::class, 'deleteReg']);
-
 Route::post('auth/register', [UserController::class, 'createUser']);
 Route::post('auth/login', [UserController::class, 'loginUser']);

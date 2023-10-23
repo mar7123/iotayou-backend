@@ -15,11 +15,14 @@ use Throwable;
 
 class UserController extends Controller
 {
+    /**
+     * AUTH
+     */
     public function createUser(Request $request): Response
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'username' => 'required',
+                'code' => 'required',
                 'full_name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'phone_num' => 'required',
@@ -36,7 +39,7 @@ class UserController extends Controller
             }
             $salt = Str::random(10);
             $user = User::create([
-                'username' => $request->username,
+                'code' => $request->code,
                 'full_name' => $request->full_name,
                 'email' => $request->email,
                 'phone_num' => $request->phone_num,
@@ -103,116 +106,15 @@ class UserController extends Controller
             ], 500);
         }
     }
-    public function newReg(Request $request): Response
+    public function logout(Request $request): Response
     {
         try {
-            $validateUser = Validator::make($request->all(), [
-                'username' => 'required',
-                'full_name' => 'required',
-                'email' => 'required|email|unique:users,email',
-                'phone_num' => 'required',
-                'address' => 'required',
-                'password' => 'required',
-                'user_type' => 'required',
-            ]);
-            if ($validateUser->fails()) {
-                return Response([
-                    'status' => false,
-                    'message' => 'validation_error',
-                    'errors' => $validateUser->errors()
-                ], 401);
-            }
-            // if ($request->user()->user_type >= $request->user_type) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
-            $salt = Str::random(10);
-            $user = User::create([
-                'username' => $request->username,
-                'full_name' => $request->full_name,
-                'email' => $request->email,
-                'phone_num' => $request->phone_num,
-                'address' => $request->address,
-                'salt' => $salt,
-                'password' => $request->password,
-                'user_type' => $request->user_type,
-            ]);
-            return Response([
-                'status' => true,
-                'message' => 'Created successfully',
-            ], 201);
-        } catch (Throwable $th) {
-            return Response([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-    public function updateReg(Request $request): Response
-    {
-        try {
-            $validateUser = Validator::make($request->all(), [
-                'user_id' => 'required',
-            ]);
-            if ($validateUser->fails()) {
-                return Response([
-                    'status' => false,
-                    'message' => 'validation_error',
-                    'errors' => $validateUser->errors()
-                ], 401);
-            }
-            // if ($request->user()->user_type >= $request->user_type) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
-            $reg = User::where('user_id', $request->user_id)->first();
-            $reg->update($request->except(['user_id']));
-            return Response([
-                'status' => true,
-                'message' => 'updated successfully',
-            ], 201);
-        } catch (Throwable $th) {
-            return Response([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-    public function deleteReg(Request $request): Response
-    {
-        try {
-            $validateUser = Validator::make($request->all(), [
-                'user_id' => 'required',
-            ]);
-            if ($validateUser->fails()) {
-                return Response([
-                    'status' => false,
-                    'message' => 'validation_error',
-                    'errors' => $validateUser->errors()
-                ], 401);
-            }
-            // if ($request->user()->user_type >= $request->user_type) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
-            $reg = User::where('user_id', $request->user_id)->first();
-            if ($reg == null) {
-                return Response([
-                    'status' => false,
-                    'data' => 'User not found',
-                ], 401);
-            }
-            $reg->delete();
-            return Response([
-                'status' => true,
-                'message' => 'deleted successfully',
-            ], 201);
+            $request->user()->tokens()->delete();
+            activity()
+                ->causedBy($request->user())
+                ->event('logged out')
+                ->log('logged out');
+            return Response(['data' => 'User Logout successfully.'], 200);
         } catch (Throwable $th) {
             return Response([
                 'status' => false,
@@ -224,7 +126,7 @@ class UserController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'username' => 'required',
+                'code' => 'required',
                 'full_name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'phone_num' => 'required',
@@ -250,6 +152,137 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * CRUD CLIENT CUSTOMER
+     */
+    public function newClientCust(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'code' => 'required',
+                'full_name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'phone_num' => 'required',
+                'address' => 'required',
+                'password' => 'required',
+                'user_type' => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            if ($request->user()->user_type >= $request->user_type) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $salt = Str::random(10);
+            $user = User::create([
+                'code' => $request->code,
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'phone_num' => $request->phone_num,
+                'address' => $request->address,
+                'salt' => $salt,
+                'password' => $request->password,
+                'user_type' => $request->user_type,
+            ]);
+            return Response([
+                'status' => true,
+                'message' => 'Created successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function updateClientCust(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'user_id' => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            $reg = User::where('user_id', $request->user_id)->first();
+            if ($reg == null) {
+                return Response([
+                    'status' => false,
+                    'data' => 'User not found',
+                ], 401);
+            }
+            if ($request->user()->user_type >= $reg->user_type) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $reg->update($request->except(['user_id']));
+            return Response([
+                'status' => true,
+                'message' => 'updated successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function deleteClientCust(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'user_id' => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            $reg = User::where('user_id', $request->user_id)->first();
+            if ($reg == null) {
+                return Response([
+                    'status' => false,
+                    'data' => 'User not found',
+                ], 401);
+            }
+            if ($request->user()->user_type >= $reg->user_type) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $reg->delete();
+            return Response([
+                'status' => true,
+                'message' => 'deleted successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * USER CHILDREN
+     */
     public function getClients(Request $request): Response
     {
         try {
@@ -274,42 +307,25 @@ class UserController extends Controller
     public function getCustomers(Request $request): Response
     {
         try {
-            // if ($request->user()->user_type > 2) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
-            // $result = $request->user()->children()->get();
-            // if ($request->user()->user_type == 1) {
-            //     $adm = new Collection();
-            //     foreach ($result as $rs) {
-            //         $temp = $rs->children()->get();
-            //         $adm = $adm->concat($temp);
-            //     }
-            //     $result = $adm;
-            // }
-            $result = User::where('user_type', 3)->get();
+            if ($request->user()->user_type > 2) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $result = $request->user()->children()->get();
+            if ($request->user()->user_type == 1) {
+                $adm = new Collection();
+                foreach ($result as $rs) {
+                    $temp = $rs->children()->get();
+                    $adm = $adm->concat($temp);
+                }
+                $result = $adm;
+            }
             return Response([
                 'status' => true,
                 'data' => $result,
             ], 200);
-        } catch (Throwable $th) {
-            return Response([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-    public function logout(Request $request): Response
-    {
-        try {
-            $request->user()->tokens()->delete();
-            activity()
-                ->causedBy($request->user())
-                ->event('logged out')
-                ->log('logged out');
-            return Response(['data' => 'User Logout successfully.'], 200);
         } catch (Throwable $th) {
             return Response([
                 'status' => false,
