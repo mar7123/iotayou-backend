@@ -227,7 +227,7 @@ class UserController extends Controller
     public function updateClientCust(Request $request): Response
     {
         try {
-            $validateUser = Validator::make($request->all(), $request->all(), [
+            $validateUser = Validator::make($request->all(), [
                 'user_id' => 'required',
             ]);
             if ($validateUser->fails()) {

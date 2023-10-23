@@ -69,7 +69,7 @@ class SiteController extends Controller
             // }
             $parent = $request->user();
             if ($parent->user_type != 3) {
-                $validateParent = Validator::make($request->all(),[
+                $validateParent = Validator::make($request->all(), [
                     'customer_id' => 'required'
                 ]);
                 if ($validateParent->fails()) {
