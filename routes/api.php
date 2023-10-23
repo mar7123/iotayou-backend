@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\PrinterController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\UserController;
@@ -37,6 +38,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/site/update', [SiteController::class, 'updateSite']);
     Route::post('/site/delete', [SiteController::class, 'deleteSite']);
     
+    // Printer CRUD
+    Route::post('/printer/create', [PrinterController::class, 'createPrinter']);
+    Route::post('/printer/update', [PrinterController::class, 'updatePrinter']);
+    Route::post('/printer/delete', [PrinterController::class, 'deletePrinter']);
+    
     // User Children
     Route::get('/clients', [UserController::class, 'getClients']);
     Route::get('/customers', [UserController::class, 'getCustomers']);
@@ -46,6 +52,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Devices
     Route::get('/user/devicelist', [PrinterController::class, 'deviceList']);
+
+    // Instruments
+    Route::get('/instruments', [InstrumentController::class, 'getInstruments']);
 });
 // Route::middleware('auth:sanctum')->post('/auth/register', [UserController::class, 'createUser']);
 Route::post('auth/register', [UserController::class, 'createUser']);

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Printer;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
@@ -41,76 +43,133 @@ class PrinterController extends Controller
                 ->withProperties($pr)
                 ->event('retrieved')
                 ->log('listed devices');
-
-            // $pr = new Collection();
-            // foreach($st as $site){
-
-            // }
-            // if ($request->user()->user_type == 1) {
-            //     $parent = $request->user()->load(['children', 'children.children', 'children.children.sites', 'children.children.sites.printers']);
-            //     $result = collect([]);
-            //     foreach ($parent->children as $cl) {
-            //         foreach ($cl->children as $cu) {
-            //             foreach ($cu->sites as $si) {
-            //                 foreach ($si->printers as $pr) {
-            //                     $result->push($pr);
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     activity()
-            //         ->causedBy($parent)
-            //         ->performedOn($result->first())
-            //         ->withProperties($result)
-            //         ->event('retrieved')
-            //         ->log('listed devices');
-            //     return Response([
-            //         'status' => true,
-            //         'data' => $result,
-            //     ], 200);
-            // } else if ($request->user()->user_type == 2) {
-            //     $parent = $request->user()->load(['children', 'children.sites', 'children.sites.printers']);
-            //     $result = collect([]);
-            //     foreach ($parent->children as $cu) {
-            //         foreach ($cu->sites as $si) {
-            //             foreach ($si->printers as $pr) {
-            //                 $result->push($pr);
-            //             }
-            //         }
-            //     }
-            //     activity()
-            //         ->causedBy($parent)
-            //         ->performedOn($result->first())
-            //         ->withProperties($result)
-            //         ->event('retrieved')
-            //         ->log('listed devices');
-            //     return Response([
-            //         'status' => true,
-            //         'data' => $result,
-            //     ], 200);
-            // } else if ($request->user()->user_type == 3) {
-            //     $parent = $request->user()->load(['sites', 'sites.printers']);
-            //     $result = collect([]);
-            //     foreach ($parent->sites as $si) {
-            //         foreach ($si->printers as $pr) {
-            //             $result->push($pr);
-            //         }
-            //     }
-            //     activity()
-            //         ->causedBy($parent)
-            //         ->performedOn($result->first())
-            //         ->withProperties($result)
-            //         ->event('retrieved')
-            //         ->log('listed devices');
-            //     return Response([
-            //         'status' => true,
-            //         'data' => $result,
-            //     ], 200);
-            // }
             return Response([
                 'status' => true,
                 'data' => $pr,
             ], 200);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function createPrinter(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'site_id' => 'required',
+                'instrument_id' => 'required',
+                "code" => 'required',
+                "name" => 'required',
+                "ip_addr" => 'required',
+                "printer_port" => 'required',
+                "status" => 'required',
+                "notes" => 'required',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            // if ($request->user()->user_type >= $request->user_type) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
+            $printer = Printer::create([
+                'site_id' => $request->site_id,
+                'instrument_id' => $request->instrument_id,
+                "code" => $request->code,
+                "name" => $request->name,
+                "ip_addr" => $request->ip_addr,
+                "printer_port" => $request->printer_port,
+                "status" => $request->status,
+                "notes" => $request->notes,
+            ]);
+            return Response([
+                'status' => true,
+                'message' => 'Created successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function updatePrinter(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'printer_id' => 'required|numeric',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            $reg = Printer::where('printer_id', $request->printer_id)->first();
+            if ($reg == null) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Printer not found',
+                ], 401);
+            }
+            // if ($request->user()->user_type >= $reg->user_type) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
+            $reg->update($request->except(['printer_id']));
+            return Response([
+                'status' => true,
+                'message' => 'updated successfully',
+            ], 201);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function deletePrinter(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'printer_id' => 'required|numeric',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'status' => false,
+                    'message' => 'validation_error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            $reg = Printer::where('printer_id', $request->printer_id)->first();
+            if ($reg == null) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Printer not found',
+                ], 401);
+            }
+            // if ($request->user()->user_type >= $reg->user_type) {
+            //     return Response([
+            //         'status' => false,
+            //         'data' => 'Unauthorized',
+            //     ], 401);
+            // }
+            $reg->delete();
+            return Response([
+                'status' => true,
+                'message' => 'deleted successfully',
+            ], 201);
         } catch (Throwable $th) {
             return Response([
                 'status' => false,

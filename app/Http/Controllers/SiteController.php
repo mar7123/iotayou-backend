@@ -120,7 +120,6 @@ class SiteController extends Controller
                 ], 401);
             }
             $reg = Site::where('site_id', $request->site_id)->first();
-            error_log($request->site_id);
             if ($reg == null) {
                 return Response([
                     'status' => false,
