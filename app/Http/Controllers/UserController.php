@@ -183,7 +183,7 @@ class UserController extends Controller
             }
             $parent = $request->user();
             if ($request->user_type - $parent->user_type != 1) {
-                $validateParent = Validator::make([
+                $validateParent = Validator::make($request->all(), [
                     'parent_id' => 'required'
                 ]);
                 if ($validateParent->fails()) {
@@ -227,7 +227,7 @@ class UserController extends Controller
     public function updateClientCust(Request $request): Response
     {
         try {
-            $validateUser = Validator::make($request->all(), [
+            $validateUser = Validator::make($request->all(), $request->all(), [
                 'user_id' => 'required',
             ]);
             if ($validateUser->fails()) {
