@@ -27,9 +27,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/update', [UserController::class, 'updateUser']);
     Route::get('/logout', [UserController::class, 'logout']);
 
+    // Cust & Client CRUD
     Route::post('/user/newreg', [UserController::class, 'newClientCust']);
     Route::post('/user/updatereg', [UserController::class, 'updateClientCust']);
     Route::post('/user/deletereg', [UserController::class, 'deleteClientCust']);
+
+    // Site CRUD
+    Route::post('/site/create', [SiteController::class, 'createSite']);
+    Route::post('/site/update', [SiteController::class, 'updateSite']);
+    Route::post('/site/delete', [SiteController::class, 'deleteSite']);
     
     // User Children
     Route::get('/clients', [UserController::class, 'getClients']);

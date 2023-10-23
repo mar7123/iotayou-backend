@@ -25,8 +25,11 @@ class Site extends Model
         "location",
         "pic",
         "status",
+        "notes"
     ];
     protected $hidden = [
+        "sourceloc",
+        "pic",
         "created_at",
         "updated_at",
     ];

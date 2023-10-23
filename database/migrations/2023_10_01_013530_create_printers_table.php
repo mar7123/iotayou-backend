@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('printers', function (Blueprint $table) {
             $table->integer('printer_id')->autoIncrement();
-            $table->integer('site_id');
-            $table->foreign('site_id')->references('site_id')->on('sites');
+            $table->integer('site_id')->nullable();
+            $table->foreign('site_id')->references('site_id')->on('sites')->nullOnDelete();
+            $table->integer('instrument_id')->nullable();
+            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->nullOnDelete();
             $table->string('code', 100);
             $table->string('name', 100);
             $table->string('ip_addr', 15);

@@ -108,9 +108,9 @@ class PrinterController extends Controller
             //     ], 200);
             // }
             return Response([
-                'status' => false,
+                'status' => true,
                 'data' => $pr,
-            ], 401);
+            ], 200);
         } catch (Throwable $th) {
             return Response([
                 'status' => false,

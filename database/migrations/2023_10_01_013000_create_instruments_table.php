@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('instruments', function (Blueprint $table) {
             $table->integer('instrument_id')->autoIncrement();
-            $table->integer('printer_id');
-            $table->foreign('printer_id')->references('printer_id')->on('printers')->cascadeOnDelete();
             $table->string('code', 20);
             $table->string('name', 100);
             $table->string('brand', 100);

@@ -18,10 +18,11 @@ return new class extends Migration
             $table->string('code', 100);
             $table->string('name', 100);
             $table->text('address', 100);
-            $table->smallInteger('sourceloc');
+            $table->smallInteger('sourceloc')->nullable();
             $table->string('location', 100);
-            $table->string('pic', 100);
+            $table->string('pic', 100)->nullable();
             $table->smallInteger('status');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

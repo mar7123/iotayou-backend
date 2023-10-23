@@ -14,6 +14,7 @@ class SiteSeeder extends Seeder
     public function run(): void
     {
         $user = \App\Models\User::where('user_type', 3)->get();
+        $instruments = \App\Models\Instrument::get();
         foreach ($user as $cu) {
             \App\Models\Site::factory(2)
                 ->state(new Sequence(
@@ -24,22 +25,14 @@ class SiteSeeder extends Seeder
                         ->state(new Sequence(
                             fn ($sequence) => [
                                 'site_id' => function ($site) {
-                                    dd($site);
                                     return $site['site_id'];
+                                },
+                                'instrument_id' => function ($site) use ($sequence, $instruments) {
+                                    $ins = $instruments->get(($sequence->index % 6) - 1);
+                                    return $ins->instrument_id;
                                 }
                             ]
                         ))
-                        ->has(
-                            \App\Models\Instrument::factory((1))
-                                ->state(new Sequence(
-                                    fn ($sequence) => [
-                                        'printer_id' => function ($printer) {
-                                            return $printer['printer_id'];
-                                        }
-                                    ]
-                                )),
-                            'instruments'
-                        )
                         ->has(
                             \App\Models\Alarm::factory((2))
                                 ->state(new Sequence(

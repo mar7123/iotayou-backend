@@ -181,6 +181,26 @@ class UserController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
+            $parent = $request->user();
+            if ($request->user_type - $parent->user_type != 1) {
+                $validateParent = Validator::make([
+                    'parent_id' => 'required'
+                ]);
+                if ($validateParent->fails()) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'validation_error',
+                        'errors' => $validateParent->errors()
+                    ], 401);
+                }
+                $parent = User::where('user_id', $request->parent_id)->first();
+                if ($request->user_type - $parent->user_type != 1) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'invalid parent id',
+                    ], 401);
+                }
+            }
             $salt = Str::random(10);
             $user = User::create([
                 'code' => $request->code,
@@ -192,6 +212,7 @@ class UserController extends Controller
                 'password' => $request->password,
                 'user_type' => $request->user_type,
             ]);
+            $parent->children()->attach($user->user_id);
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',

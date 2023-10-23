@@ -73,11 +73,11 @@ class User extends Authenticatable
 
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'parent_children', 'parent_id', 'child_id')->using(ParentChild::class);
+        return $this->belongsToMany(User::class, 'parent_children', 'parent_id', 'child_id')->using(ParentChild::class)->withTimestamps();
     }
     public function parent(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')->using(ParentChild::class);
+        return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')->using(ParentChild::class)->withTimestamps();
     }
     public function sites(): HasMany
     {
