@@ -110,7 +110,7 @@ class SiteController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'site_id' => 'required',
+                'site_id' => 'required|numeric',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -120,6 +120,7 @@ class SiteController extends Controller
                 ], 401);
             }
             $reg = Site::where('site_id', $request->site_id)->first();
+            error_log($request->site_id);
             if ($reg == null) {
                 return Response([
                     'status' => false,
@@ -148,7 +149,7 @@ class SiteController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'site_id' => 'required',
+                'site_id' => 'required|numeric',
             ]);
             if ($validateUser->fails()) {
                 return Response([

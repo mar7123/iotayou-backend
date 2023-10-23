@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('code', 100);
             $table->string('name', 100);
             $table->text('address', 100);
-            $table->smallInteger('sourceloc')->nullable();
+            $table->smallInteger('sourceloc')->nullable()->default(80);
             $table->string('location', 100);
             $table->string('pic', 100)->nullable();
             $table->smallInteger('status');

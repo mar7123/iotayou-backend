@@ -15,8 +15,8 @@ return new class extends Migration
             $table->integer('parent_children_id')->autoIncrement();
             $table->uuid('parent_id')->nullable();
             $table->uuid('child_id')->nullable();
-            $table->foreign('parent_id')->references('user_id')->on('users');
-            $table->foreign('child_id')->references('user_id')->on('users');
+            $table->foreign('parent_id')->references('user_id')->on('users')->cascadeOnDelete();
+            $table->foreign('child_id')->references('user_id')->on('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
