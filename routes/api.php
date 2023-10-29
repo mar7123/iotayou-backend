@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AlarmController;
 use App\Http\Controllers\InstrumentController;
+use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PrinterController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\UserController;
@@ -53,6 +55,18 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/instrument/create', [InstrumentController::class, 'createInstrument']);
     Route::post('/instrument/update', [InstrumentController::class, 'updateInstrument']);
     Route::post('/instrument/delete', [InstrumentController::class, 'deleteInstrument']);
+    
+    // Parameters
+    Route::get('/parameters', [ParameterController::class, 'getParameters']);
+    Route::post('/parameter/create', [ParameterController::class, 'createParameter']);
+    Route::post('/parameter/update', [ParameterController::class, 'updateParameter']);
+    Route::post('/parameter/delete', [ParameterController::class, 'deleteParameter']);
+    
+    // Alarms
+    Route::get('/alarms', [AlarmController::class, 'getAlarms']);
+    Route::post('/alarm/create', [AlarmController::class, 'createAlarm']);
+    Route::post('/alarm/update', [AlarmController::class, 'updateAlarm']);
+    Route::post('/alarm/delete', [AlarmController::class, 'deleteAlarm']);
 });
 // Route::middleware('auth:sanctum')->post('/auth/register', [UserController::class, 'createUser']);
 Route::post('auth/register', [UserController::class, 'createUser']);
