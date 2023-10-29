@@ -31,7 +31,6 @@ class AlarmController extends Controller
             $validateUser = Validator::make($request->all(), [
                 "printer_id" => 'required',
                 "parameter_id" => 'required',
-                "code" => 'required',
                 "name" => 'required',
                 "condition" => 'required',
                 "status" => 'required',
@@ -53,7 +52,6 @@ class AlarmController extends Controller
             $alarm = Alarm::create([
                 "printer_id" => $request->printer_id,
                 "parameter_id" => $request->parameter_id,
-                "code" => $request->code,
                 "name" => $request->name,
                 "condition" => $request->condition,
                 "status" => $request->status,
