@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('alarms', function (Blueprint $table) {
             $table->integer('alarm_id')->autoIncrement();
-            $table->integer('printer_id');
+            $table->uuid('printer_id');
             $table->foreign('printer_id')->references('printer_id')->on('printers')->cascadeOnDelete();
+            $table->integer('parameter_id');
+            $table->foreign('parameter_id')->references('parameter_id')->on('parameters')->cascadeOnDelete();
             $table->string('name', 50);
-            $table->tinyInteger('status');
+            $table->string('condition', 50);
+            $table->smallInteger('status');
+            $table->text('notes')->nullable();
             $table->timestamp('occured_at')->nullable();
             $table->timestamp('solved_at')->nullable();
             $table->timestamps();

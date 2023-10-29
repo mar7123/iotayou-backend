@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Printer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Instrument>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Parameter>
  */
-class InstrumentFactory extends Factory
+class ParameterFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,11 +16,11 @@ class InstrumentFactory extends Factory
      */
     public function definition(): array
     {
-        $code = "D" . fake()->randomElement(["120", "320", "620"]) . "i";
         return [
-            "code" => $code,
-            "name" => "Domino Laser " . $code,
+            "code" => fake()->firstName(),
+            "name" => fake()->name() . " level",
             "status" => 6,
+            "notes" => fake()->text(100),
         ];
     }
 }

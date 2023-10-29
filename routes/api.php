@@ -32,29 +32,27 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/newreg', [UserController::class, 'newClientCust']);
     Route::post('/user/updatereg', [UserController::class, 'updateClientCust']);
     Route::post('/user/deletereg', [UserController::class, 'deleteClientCust']);
+    // User Children
+    Route::get('/clients', [UserController::class, 'getClients']);
+    Route::get('/customers', [UserController::class, 'getCustomers']);
 
     // Site CRUD
     Route::post('/site/create', [SiteController::class, 'createSite']);
     Route::post('/site/update', [SiteController::class, 'updateSite']);
     Route::post('/site/delete', [SiteController::class, 'deleteSite']);
+    Route::get('/sites', [SiteController::class, 'getSites']);
     
     // Printer CRUD
     Route::post('/printer/create', [PrinterController::class, 'createPrinter']);
     Route::post('/printer/update', [PrinterController::class, 'updatePrinter']);
     Route::post('/printer/delete', [PrinterController::class, 'deletePrinter']);
-    
-    // User Children
-    Route::get('/clients', [UserController::class, 'getClients']);
-    Route::get('/customers', [UserController::class, 'getCustomers']);
-
-    // Sites
-    Route::get('/sites', [SiteController::class, 'getSites']);
-
-    // Devices
     Route::get('/user/devicelist', [PrinterController::class, 'deviceList']);
 
     // Instruments
     Route::get('/instruments', [InstrumentController::class, 'getInstruments']);
+    Route::post('/instrument/create', [InstrumentController::class, 'createInstrument']);
+    Route::post('/instrument/update', [InstrumentController::class, 'updateInstrument']);
+    Route::post('/instrument/delete', [InstrumentController::class, 'deleteInstrument']);
 });
 // Route::middleware('auth:sanctum')->post('/auth/register', [UserController::class, 'createUser']);
 Route::post('auth/register', [UserController::class, 'createUser']);

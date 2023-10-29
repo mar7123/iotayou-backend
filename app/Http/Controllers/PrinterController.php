@@ -105,7 +105,7 @@ class PrinterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'printer_id' => 'required|numeric',
+                'printer_id' => 'required',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -143,7 +143,7 @@ class PrinterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'printer_id' => 'required|numeric',
+                'printer_id' => 'required',
             ]);
             if ($validateUser->fails()) {
                 return Response([

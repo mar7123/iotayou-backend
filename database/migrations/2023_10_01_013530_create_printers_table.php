@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('printers', function (Blueprint $table) {
-            $table->integer('printer_id')->autoIncrement();
-            $table->integer('site_id')->nullable();
+            $table->uuid('printer_id')->primary();
+            $table->uuid('site_id')->nullable();
             $table->foreign('site_id')->references('site_id')->on('sites')->nullOnDelete();
             $table->integer('instrument_id')->nullable();
             $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->nullOnDelete();

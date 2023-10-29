@@ -27,6 +27,7 @@ class AlarmFactory extends Factory
         }
         return [
             "name" => fake()->sentence(2),
+            "condition" => fake()->randomElement(['<', '>']) .  fake()->numberBetween(7, 15),
             "status" => $status,
             "occured_at" => $timenow,
             "solved_at" => $solved_at

@@ -110,7 +110,7 @@ class SiteController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'site_id' => 'required|numeric',
+                'site_id' => 'required',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -148,7 +148,7 @@ class SiteController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'site_id' => 'required|numeric',
+                'site_id' => 'required',
             ]);
             if ($validateUser->fails()) {
                 return Response([

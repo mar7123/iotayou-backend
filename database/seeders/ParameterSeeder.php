@@ -12,6 +12,6 @@ class ParameterSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // $inst = \App\Models\Instrument::get();
     }
 }

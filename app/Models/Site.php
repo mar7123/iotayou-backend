@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,11 +12,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Site extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasUuids;
 
     protected $table = "sites";
     protected $primaryKey = "site_id";
-    protected $keyType = "integer";
+    protected $keyType = "string";
     protected $fillable = [
         "customer_id",
         "code",
@@ -33,7 +34,7 @@ class Site extends Model
         "created_at",
         "updated_at",
     ];
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = true;
 
     public function customers(): BelongsTo

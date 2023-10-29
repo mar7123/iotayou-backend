@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,11 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Printer extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $table = "printers";
     protected $primaryKey = "printer_id";
-    protected $keyType = "integer";
+    protected $keyType = "string";
     protected $fillable = [
         "site_id",
         "instrument_id",
@@ -36,7 +37,7 @@ class Printer extends Model
         "created_at",
         "updated_at",
     ];
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = true;
 
     public function sites(): BelongsTo

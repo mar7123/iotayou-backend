@@ -16,8 +16,11 @@ class Alarm extends Model
     protected $keyType = "integer";
     protected $fillable = [
         "printer_id",
+        "parameter_id",
         "name",
+        "condition",
         "status",
+        "notes",
         "occured_at",
         "solved_at"
     ];
@@ -34,6 +37,10 @@ class Alarm extends Model
     public function printers(): BelongsTo
     {
         return $this->belongsTo(Printer::class, "printer_id", "printer_id");
+    }
+    public function parameters(): BelongsTo
+    {
+        return $this->belongsTo(Parameter::class, "parameter_id", "parameter_id");
     }
     public function getDurationAttribute(): string
     {

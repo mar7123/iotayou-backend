@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('instruments', function (Blueprint $table) {
-            $table->integer('instrument_id')->autoIncrement();
+        Schema::create('parameters', function (Blueprint $table) {
+            $table->integer('parameter_id')->autoIncrement();
+            $table->integer('instrument_id')->nullable();
+            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->nullOnDelete();
             $table->string('code', 20);
-            $table->string('name', 100);
+            $table->string('name', 50);
             $table->smallInteger('status');
             $table->text('notes')->nullable();
             $table->timestamps();
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('instruments');
+        Schema::dropIfExists('parameters');
     }
 };

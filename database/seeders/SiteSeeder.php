@@ -21,29 +21,30 @@ class SiteSeeder extends Seeder
                     ['customer_id' => $cu->user_id]
                 ))
                 ->has(
-                    \App\Models\Printer::factory((2))
+                    \App\Models\Printer::factory((3))
                         ->state(new Sequence(
                             fn ($sequence) => [
                                 'site_id' => function ($site) {
                                     return $site['site_id'];
                                 },
                                 'instrument_id' => function ($site) use ($sequence, $instruments) {
-                                    $ins = $instruments->get(($sequence->index % 6) - 1);
+                                    $ins = $instruments->get(($sequence->index % 5));
                                     return $ins->instrument_id;
                                 }
                             ]
                         ))
-                        ->has(
-                            \App\Models\Alarm::factory((2))
-                                ->state(new Sequence(
-                                    fn ($sequence) => [
-                                        'printer_id' => function ($printer) {
-                                            return $printer['printer_id'];
-                                        }
-                                    ]
-                                )),
-                            'alarms'
-                        ),
+                        // ->has(
+                        //     \App\Models\Alarm::factory((2))
+                        //         ->state(new Sequence(
+                        //             fn ($sequence) => [
+                        //                 'printer_id' => function ($printer) {
+                        //                     return $printer['printer_id'];
+                        //                 }
+                        //             ]
+                        //         )),
+                        //     'alarms'
+                        // )
+                        ,
                     'printers'
                 )
                 ->create();

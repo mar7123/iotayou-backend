@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sites', function (Blueprint $table) {
-            $table->integer('site_id')->autoIncrement();
+            $table->uuid('site_id')->primary();
             $table->uuid('customer_id')->nullable();
             $table->foreign('customer_id')->references('user_id')->on('users')->nullOnDelete();
             $table->string('code', 100);
