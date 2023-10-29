@@ -92,7 +92,8 @@ class UserController extends Controller
                 return Response([
                     'status' => true,
                     'message' => 'User logged in successfully',
-                    'token' => $success
+                    'token' => $success,
+                    'userData' => $user->setVisible(['email'])
                 ], 200);
             }
             return Response([
