@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Parameter extends Model
@@ -28,6 +29,13 @@ class Parameter extends Model
     public $incrementing = true;
     public $timestamps = true;
 
+    public function printers(): BelongsToMany
+    {
+        return $this->belongsToMany(Printer::class, 'alarms', 'parameter_id', 'printer_id')
+            ->using(Alarms::class)
+            ->withPivot(["alarm_id", "name", "condition", "status", "notes", "occured_at", "solved_at"])
+            ->withTimestamps();
+    }
     public function instruments(): BelongsTo
     {
         return $this->belongsTo(Instrument::class, "instrument_id", "instrument_id");

@@ -15,14 +15,22 @@ class UserGroupsSeeder extends Seeder
             'Super Admin',
             'Client',
             'Customer',
+            'Site',
+            'Printer',
+            'Alarm'
         ];
         $icon = [
             'admin.png',
             'prod_man.png',
             'main_man.png',
             'prod_sup.png',
+            'prod_sup.png',
+            'prod_sup.png',
         ];
         $page1st = [
+            '/dashboard',
+            '/dashboard',
+            '/dashboard',
             '/dashboard',
             '/dashboard',
             '/dashboard',
@@ -31,6 +39,9 @@ class UserGroupsSeeder extends Seeder
             'sa',
             'cl',
             'cu',
+            'si',
+            'pr',
+            'al'
         ];
         \App\Models\UserGroups::factory()
             ->count(count($name))
@@ -39,7 +50,7 @@ class UserGroupsSeeder extends Seeder
                 'icon' => $icon[$sequence->index],
                 'page1st' => $page1st[$sequence->index],
                 'group_code' => $group_code[$sequence->index],
-                ])
+            ])
             ->create();
     }
 }

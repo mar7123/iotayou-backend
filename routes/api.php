@@ -58,6 +58,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     
     // Parameters
     Route::get('/parameters', [ParameterController::class, 'getParameters']);
+    Route::get('/parameters/{ins_id}', [ParameterController::class, 'getParameterByInstrument']);
     Route::post('/parameter/create', [ParameterController::class, 'createParameter']);
     Route::post('/parameter/update', [ParameterController::class, 'updateParameter']);
     Route::post('/parameter/delete', [ParameterController::class, 'deleteParameter']);

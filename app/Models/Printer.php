@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Printer extends Model
@@ -40,6 +41,13 @@ class Printer extends Model
     public $incrementing = false;
     public $timestamps = true;
 
+    public function parameters(): BelongsToMany
+    {
+        return $this->belongsToMany(Parameter::class, 'alarms', 'printer_id', 'parameter_id')
+            ->using(Alarms::class)
+            ->withPivot(["alarm_id", "name", "condition", "status", "notes", "occured_at", "solved_at"])
+            ->withTimestamps();
+    }
     public function sites(): BelongsTo
     {
         return $this->belongsTo(Site::class, "site_id", "site_id");

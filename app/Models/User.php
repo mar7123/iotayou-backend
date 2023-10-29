@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
@@ -73,11 +74,21 @@ class User extends Authenticatable
 
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'parent_children', 'parent_id', 'child_id')->using(ParentChild::class)->withTimestamps();
+        return $this->belongsToMany(User::class, 'parent_children', 'parent_id', 'child_id')
+        ->using(ParentChild::class)
+        ->withPivot(['parent_children_id'])
+        ->withTimestamps();
     }
     public function parent(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')->using(ParentChild::class)->withTimestamps();
+        return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')
+        ->using(ParentChild::class)
+        ->withPivot(['parent_children_id'])
+        ->withTimestamps();
+    }
+    public function user_groups(): BelongsTo
+    {
+        return $this->belongsTo(UserGroups::class, "user_type", "user_group_id");
     }
     public function sites(): HasMany
     {

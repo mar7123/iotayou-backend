@@ -25,6 +25,21 @@ class ParameterController extends Controller
             ], 500);
         }
     }
+    public function getParameterByInstrument(Request $request, string $ins_id): Response
+    {
+        try {
+            $result = Parameter::where('instrument_id', $ins_id)->get();
+            return Response([
+                'status' => true,
+                'data' => $result,
+            ], 200);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
     public function createParameter(Request $request): Response
     {
         try {

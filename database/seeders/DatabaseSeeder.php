@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(InstrumentSeeder::class);
         $this->call(SiteSeeder::class);
         $this->call(AlarmSeeder::class);
-        // $this->call(PrinterSeeder::class);
-        // $this->call(InstrumentSeeder::class);
+        $this->call(PermissionSeeder::class);
     }
 }
