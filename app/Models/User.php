@@ -75,16 +75,23 @@ class User extends Authenticatable
     public function children(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'parent_children', 'parent_id', 'child_id')
-        ->using(ParentChild::class)
-        ->withPivot(['parent_children_id'])
-        ->withTimestamps();
+            ->using(ParentChild::class)
+            ->withPivot(['parent_children_id'])
+            ->withTimestamps();
     }
     public function parent(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')
-        ->using(ParentChild::class)
-        ->withPivot(['parent_children_id'])
-        ->withTimestamps();
+            ->using(ParentChild::class)
+            ->withPivot(['parent_children_id'])
+            ->withTimestamps();
+    }
+    public function user_permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroups::class, 'permissions', 'user_id', 'user_group_id')
+            ->using(Permission::class)
+            ->withPivot(['permission_id', 'user_permission'])
+            ->withTimestamps();
     }
     public function user_groups(): BelongsTo
     {

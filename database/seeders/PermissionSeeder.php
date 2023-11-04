@@ -12,7 +12,8 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // $adm = \App\Models\User::where('email', 'admin123@email.com')->first();
+
+        $user_group_id = \App\Models\UserGroups::orderBy('user_group_id')->get();
         // $user_group_id = [
         //     'admin.png',
         //     'prod_man.png',
@@ -21,21 +22,30 @@ class PermissionSeeder extends Seeder
         //     'prod_sup.png',
         //     'prod_sup.png',
         // ];
-        // $page1st = [
-        //     '/dashboard',
-        //     '/dashboard',
-        //     '/dashboard',
-        //     '/dashboard',
-        //     '/dashboard',
-        //     '/dashboard',
-        // ];
-        // \App\Models\UserGroups::factory()
-        //     ->count(count($user_group_id))
-        //     ->sequence(fn ($sequence) => [
-        //         'user_id' => $adm->user_id,
-        //         'user_group_id' => $user_group_id[$sequence->index],
-        //         'page1st' => $page1st[$sequence->index],
-        //     ])
-        //     ->create();
+        $adm = \App\Models\User::where('email', 'admin123@email.com')->first();
+        $adm_user_group = $user_group_id->where('user_group_id', '!=', $adm->user_type);
+        foreach ($adm_user_group as $aug) {
+            \App\Models\Permission::factory()
+                ->count(1)
+                ->state([
+                    'user_id' => $adm->user_id,
+                    'user_group_id' => $aug->user_group_id,
+                    'user_permission' => 'vaed',
+                ])
+                ->create();
+        }
+        $usr = \App\Models\User::where('email', '!=', 'admin123@email.com')->get();
+        foreach ($usr as $us) {
+            $usr_group = $user_group_id->where('user_group_id', '>', $us->user_type);
+            foreach ($usr_group as $ug) {
+                \App\Models\Permission::factory()
+                    ->count(1)
+                    ->state([
+                        'user_id' => $us->user_id,
+                        'user_group_id' => $ug->user_group_id,
+                    ])
+                    ->create();
+            }
+        }
     }
 }

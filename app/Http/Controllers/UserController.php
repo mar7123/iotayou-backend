@@ -162,13 +162,16 @@ class UserController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            if ($request->user()->user_type >= $request->user_type) {
+            $parent = $request->user();
+            $req_user_id = $parent->user_id;
+            $req_user_type = $parent->user_type;
+            $permission = $parent->user_permissions()->where('user_groups.user_group_id', $request->user_type)->first();
+            if ($permission == null || substr($permission->pivot->user_permission, 1, 1) != "a") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $parent = $request->user();
             if ($request->user_type - $parent->user_type != 1) {
                 $validateParent = Validator::make($request->all(), [
                     'parent_id' => 'required'
@@ -181,7 +184,11 @@ class UserController extends Controller
                     ], 401);
                 }
                 $parent = User::where('user_id', $request->parent_id)->first();
-                if ($request->user_type - $parent->user_type != 1) {
+                $temp = $parent;
+                while ($temp->parent()->first() != null && $temp->user_type != $req_user_type) {
+                    $temp = $temp->parent()->first();
+                }
+                if ($request->user_type - $parent->user_type != 1 || $temp->user_id != $req_user_id) {
                     return Response([
                         'status' => false,
                         'message' => 'invalid parent id',
@@ -231,10 +238,22 @@ class UserController extends Controller
                     'data' => 'User not found',
                 ], 401);
             }
-            if ($request->user()->user_type >= $reg->user_type) {
+            $requs = $request->user();
+            $permission = $requs->user_permissions()->where('user_groups.user_group_id', $reg->user_type)->first();
+            if ($permission == null || substr($permission->pivot->user_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
+                ], 401);
+            }
+            $temp = $reg;
+            while ($temp->parent()->first() != null && $temp->user_type != $requs->user_type) {
+                $temp = $temp->parent()->first();
+            }
+            if ($temp->user_id != $requs->user_id) {
+                return Response([
+                    'status' => false,
+                    'message' => 'Unauthorized',
                 ], 401);
             }
             $reg->update($request->except(['user_id']));
@@ -269,10 +288,22 @@ class UserController extends Controller
                     'data' => 'User not found',
                 ], 401);
             }
-            if ($request->user()->user_type >= $reg->user_type) {
+            $requs = $request->user();
+            $permission = $requs->user_permissions()->where('user_groups.user_group_id', $reg->user_type)->first();
+            if ($permission == null || substr($permission->pivot->user_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
+                ], 401);
+            }
+            $temp = $reg;
+            while ($temp->parent()->first() != null && $temp->user_type != $requs->user_type) {
+                $temp = $temp->parent()->first();
+            }
+            if ($temp->user_id != $requs->user_id) {
+                return Response([
+                    'status' => false,
+                    'message' => 'Unauthorized',
                 ], 401);
             }
             $reg->delete();
@@ -300,7 +331,12 @@ class UserController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = $request->user()->children()->get();
+            $result = $request->user()
+                ->children()
+                ->get()
+                ->each(function ($item, $key) {
+                    $item->user_permissions;
+                });
             return Response([
                 'status' => true,
                 'data' => $result,

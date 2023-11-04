@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserGroups extends Model
@@ -18,8 +19,21 @@ class UserGroups extends Model
         'page1st',
         'group_code',
     ];
+    protected $hidden = [
+        'icon',
+        'page1st',
+        'group_code',
+    ];
     public $incrementing = true;
     public $timestamps = true;
+
+    public function user_permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'permissions', 'user_group_id', 'user_id')
+            ->using(Permission::class)
+            ->withPivot(['permission_id', 'user_permission'])
+            ->withTimestamps();
+    }
     public function users(): HasMany
     {
         return $this->hasMany(User::class, 'user_type', 'user_group_id');

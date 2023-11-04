@@ -16,6 +16,9 @@ class ParentChild extends Pivot
         'parent_id',
         'child_id',
     ];
+    protected $hidden = [
+        "parent_children_id"
+    ];
     public $incrementing = true;
     public $timestamps = true;
 }
