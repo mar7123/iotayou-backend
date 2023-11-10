@@ -334,9 +334,7 @@ class UserController extends Controller
             $result = $request->user()
                 ->children()
                 ->get()
-                ->each(function ($item, $key) {
-                    $item->user_permissions;
-                });
+                ->load(['user_permissions']);
             return Response([
                 'status' => true,
                 'data' => $result,
@@ -357,14 +355,26 @@ class UserController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $result = $request->user()->children()->get();
-            if ($request->user()->user_type == 1) {
-                $adm = new Collection();
+            $requs = $request->user();
+            $permission = $requs->user_permissions()->where('user_groups.user_group_id', 3)->first();
+            if ($permission == null || substr($permission->pivot->user_permission, 0, 1) != "v") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $result = $requs->children()->get()
+                ->load(['user_permissions']);
+            while ($result->first()->user_type != 3) {
+                $temp = new Collection();
                 foreach ($result as $rs) {
-                    $temp = $rs->children()->get();
-                    $adm = $adm->concat($temp);
+                    $ch = $rs->children()
+                        ->get()
+                        ->load(['user_permissions']);
+                    $temp = $temp->concat($ch);
                 }
-                $result = $adm;
+                error_log($temp);
+                $result = $temp;
             }
             return Response([
                 'status' => true,

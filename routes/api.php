@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         $expiry = new DateTime();
         $expiry->modify('+30 minutes');
         $request->user()->tokens()->update(['expires_at' => $expiry]);
-        return $request->user();
+        return  $request->user()->load(['user_permissions']);
     });
     Route::post('/user/update', [UserController::class, 'updateUser']);
     Route::get('/logout', [UserController::class, 'logout']);

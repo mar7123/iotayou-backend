@@ -23,6 +23,8 @@ class UserGroups extends Model
         'icon',
         'page1st',
         'group_code',
+        'created_at',
+        'updated_at'
     ];
     public $incrementing = true;
     public $timestamps = true;
