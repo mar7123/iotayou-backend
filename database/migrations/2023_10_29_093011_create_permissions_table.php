@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->integer('permission_id')->autoIncrement();
-            $table->integer('user_group_id');
-            $table->foreign('user_group_id')->references('user_group_id')->on('user_groups');
-            $table->uuid('user_id');
-            $table->foreign('user_id')->references('user_id')->on('users')->cascadeOnDelete();
-            $table->string('user_permission', 4);
+            $table->integer('user_group');
+            $table->foreign('user_group')->references('user_group_id')->on('user_groups')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->uuid('role');
+            $table->foreign('role')->references('role_id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('role_permission', 4);
             $table->timestamps();
         });
     }

@@ -4,20 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ParentChild extends Pivot
+class Language extends Model
 {
     use HasFactory;
-    protected $table = "parent_children";
-    protected $primaryKey = "parent_children_id";
+    protected $table = "languages";
+    protected $primaryKey = "id";
     protected $keyType = "integer";
     protected $fillable = [
-        'parent_id',
-        'child_id',
-    ];
-    protected $hidden = [
-        "parent_children_id"
+        'langfunction',
+        'lang',
+        'badge',
     ];
     public $incrementing = true;
     public $timestamps = true;

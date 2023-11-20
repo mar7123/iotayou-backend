@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ParentChild>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Language>
  */
-class ParentChildFactory extends Factory
+class LanguageFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +17,7 @@ class ParentChildFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'parent_id' => $parent_id,
-            // 'child_id' => $child_id
+            //
         ];
     }
 }

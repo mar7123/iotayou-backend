@@ -8,102 +8,60 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     protected $table = "users";
     protected $primaryKey = "user_id";
     protected $keyType = "string";
     protected $fillable = [
-        'code',
-        'full_name',
+        'username',
         'email',
+        'name',
         'phone_num',
-        'pic',
-        'address',
         'salt',
         'password',
-        'picture',
-        'reset_token',
-        'birth_date',
-        'join_date',
-        'plant',
-        'site',
-        'dash_suffix',
-        'sendalmsms',
-        'sendalmemail',
-        'sendreport',
-        'announcement',
-        'email_verified_at',
-        'user_type',
         'status',
         'notes',
+        'deleted_at',
+        'user_role_id',
+        'email_verified_at',
+        'picture'
     ];
     protected $hidden = [
-        'phone_num',
-        'pic',
         'salt',
         'password',
-        'picture',
-        'reset_token',
-        'birth_date',
-        'join_date',
-        'plant',
-        'site',
-        'dash_suffix',
-        'sendalmsms',
-        'sendalmemail',
-        'sendreport',
-        'announcement',
-        'email_verified_at',
-        'user_type',
-        'remember_token',
+        'status'
     ];
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+    ];
+    protected $appends = [
+        'user_type',
+        'statuslang',
     ];
     public $incrementing = false;
     public $timestamps = true;
 
-    public function children(): BelongsToMany
+    // many to one
+    public function role(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'parent_children', 'parent_id', 'child_id')
-            ->using(ParentChild::class)
-            ->withPivot(['parent_children_id'])
-            ->withTimestamps();
+        return $this->belongsTo(Role::class, "user_role_id", "role_id");
     }
-    public function parent(): BelongsToMany
+    public function language(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'parent_children', 'child_id', 'parent_id')
-            ->using(ParentChild::class)
-            ->withPivot(['parent_children_id'])
-            ->withTimestamps();
+        return $this->belongsTo(Language::class, "status", "id");
     }
-    public function user_permissions(): BelongsToMany
+    protected function getUserTypeAttribute()
     {
-        return $this->belongsToMany(UserGroups::class, 'permissions', 'user_id', 'user_group_id')
-            ->using(Permission::class)
-            ->withPivot(['permission_id', 'user_permission'])
-            ->withTimestamps();
+        $type = $this->role()->first()->user_groups()->first();
+        return $type->name;
     }
-    public function user_groups(): BelongsTo
+    protected function getStatusLangAttribute()
     {
-        return $this->belongsTo(UserGroups::class, "user_type", "user_group_id");
-    }
-    public function sites(): HasMany
-    {
-        return $this->hasMany(Site::class, 'customer_id', 'user_id');
-    }
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['email']);
+        $lang = $this->language()->first();
+        return $lang->lang;
     }
 }

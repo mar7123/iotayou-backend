@@ -13,12 +13,12 @@ class SiteSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = \App\Models\User::where('user_type', 3)->get();
+        $roles = \App\Models\Role::where('role_type', 3)->get();
         $instruments = \App\Models\Instrument::get();
-        foreach ($user as $cu) {
+        foreach ($roles as $cu) {
             \App\Models\Site::factory(2)
                 ->state(new Sequence(
-                    ['customer_id' => $cu->user_id]
+                    ['customer_id' => $cu->role_id]
                 ))
                 ->has(
                     \App\Models\Printer::factory((3))

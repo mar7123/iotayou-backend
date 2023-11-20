@@ -24,6 +24,9 @@ Route::get('/run-migrations', function () {
 Route::get('/refresh-migrations', function () {
     return Artisan::call('migrate:refresh', ["--force" => true, "--seed" => true]);
 });
+Route::get('/clear-cache', function () {
+    return Artisan::call('cache:clear');
+});
 Route::get('/run-seeder', function () {
     return Artisan::call('db:seed');
 });

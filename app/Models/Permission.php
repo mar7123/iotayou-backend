@@ -14,23 +14,23 @@ class Permission extends Pivot
     protected $primaryKey = "permission_id";
     protected $keyType = "integer";
     protected $fillable = [
-        'user_group_id',
-        'user_id',
-        'user_permission',
+        'user_group',
+        'role',
+        'role_permission',
     ];
     protected $hidden = [
         'permission_id',
-        'user_group_id',
-        'user_id',
+        'user_group',
+        'role',
     ];
     public $incrementing = true;
     public $timestamps = true;
-    public function user_groups(): BelongsTo
+    public function user_group(): BelongsTo
     {
-        return $this->belongsTo(UserGroups::class, "user_type", "user_group_id");
+        return $this->belongsTo(UserGroups::class, "user_group", "user_group_id");
     }
-    public function users(): BelongsTo
+    public function role(): BelongsTo
     {
-        return $this->belongsTo(User::class, "user_id", "user_id");
+        return $this->belongsTo(Role::class, "role", "role_id");
     }
 }

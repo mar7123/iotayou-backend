@@ -23,10 +23,9 @@ class SiteFactory extends Factory
             "code" => fake()->firstName(),
             "name" => fake()->name(),
             "address" => fake()->address(),
-            "sourceloc" => fake()->numberBetween(1, 100),
             "location" => "{$lat}, {$long}",
-            "pic" => fake()->firstName(),
             "status" => 6,
+            "notes" => fake()->text(50)
         ];
     }
 }

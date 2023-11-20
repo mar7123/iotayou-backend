@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Site extends Model
 {
-    use HasFactory, LogsActivity, HasUuids;
+    use HasFactory, HasUuids;
 
     protected $table = "sites";
     protected $primaryKey = "site_id";
@@ -22,32 +21,23 @@ class Site extends Model
         "code",
         "name",
         "address",
-        "sourceloc",
         "location",
-        "pic",
         "status",
         "notes"
-    ];
-    protected $hidden = [
-        "sourceloc",
-        "pic",
-        "created_at",
-        "updated_at",
     ];
     public $incrementing = false;
     public $timestamps = true;
 
     public function customers(): BelongsTo
     {
-        return $this->belongsTo(User::class, "customer_id", "user_id");
+        return $this->belongsTo(Role::class, "customer_id", "role_id");
+    }
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class, "status", "id");
     }
     public function printers(): HasMany
     {
         return $this->hasMany(Printer::class, "site_id", "site_id");
-    }
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['site_id', 'code', 'name']);
     }
 }

@@ -11,19 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sites', function (Blueprint $table) {
-            $table->uuid('site_id')->primary();
-            $table->uuid('customer_id')->nullable();
-            $table->foreign('customer_id')->references('role_id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
+        Schema::create('roles', function (Blueprint $table) {
+            $table->uuid('role_id')->primary();
             $table->string('code', 20)->unique();
-            $table->string('name', 50);
-            $table->text('address', 100)->nullable();
-            $table->string('location', 100);
+            $table->string('name', 60);
+            $table->text('address');
             $table->smallInteger('status')->default(6);
             $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('notes')->nullable();
+            $table->integer('role_type');
+            $table->foreign('role_type')->references('user_group_id')->on('user_groups')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->uuid('parent_id')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
+        });
+        Schema::table('roles', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('role_id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -32,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sites');
+        Schema::dropIfExists('roles');
     }
 };

@@ -16,7 +16,11 @@ class PermissionFactory extends Factory
      */
     public function definition(): array
     {
-        $view = fake()->randomElement(['v', '-']);
+        $rnd = fake()->boolean(70);
+        $view = '-';
+        if($rnd){
+            $view = 'v';
+        }
         $add = fake()->randomElement(['a', '-']);
         $edit = fake()->randomElement(['e', '-']);
         $delete = fake()->randomElement(['d', '-']);
@@ -26,7 +30,7 @@ class PermissionFactory extends Factory
             $delete = '-';
         }
         return [
-            'user_permission' => $view . $add . $edit . $delete
+            'role_permission' => $view . $add . $edit . $delete
         ];
     }
 }

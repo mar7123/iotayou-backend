@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -13,19 +14,28 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $saltstr = Str::random(10);
+        $user_role = Role::where('code', 'admin')->first();
         \App\Models\User::create([
-            'code' => 'admin123',
-            'full_name' => 'Admin Admin',
+            'username' => 'admin123',
             'email' => 'admin123@email.com',
-            'phone_num' => '081188888888',
-            'pic' => 'Admin',
-            'address' => 'Saturnus Raya',
+            'name' => 'Admin Admin',
             'salt' => $saltstr,
             'password' => bcrypt('admin123' . $saltstr),
-            'user_type' => 1
+            'notes' => 'This is Admin Account',
+            'user_role_id' => $user_role->role_id,
+            'phone_num' => '081188888888',
         ]);
-        for ($i = 0; $i < 15; $i++) {
-            \App\Models\User::factory(1)->create();
+        $roles = Role::get();
+        foreach($roles as $rl){
+            $saltstr = Str::random(10);
+            $ug = $rl->user_groups()->first();
+            \App\Models\User::factory(2)
+            ->state([
+                'salt' => $saltstr,
+                'password' => bcrypt($ug->group_code . '123' . $saltstr),
+                'user_role_id' => $rl->role_id,
+            ])
+            ->create();
         }
     }
 }
