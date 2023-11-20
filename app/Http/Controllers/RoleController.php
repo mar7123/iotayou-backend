@@ -22,7 +22,7 @@ class RoleController extends Controller
                 'name' => 'required',
                 'address' => 'required',
                 'status' => 'integer|between:6,7',
-                'role_type' => 'required|exist:user_groups,user_group_id',
+                'role_type' => 'required|exists:user_groups,user_group_id',
             ]);
             if ($validateRole->fails()) {
                 return Response([
@@ -49,7 +49,7 @@ class RoleController extends Controller
             }
             if ($request->role_type - $parent->role_type != 1) {
                 $validateParent = Validator::make($request->all(), [
-                    'parent_id' => 'required|exist:roles,role_id',
+                    'parent_id' => 'required|exists:roles,role_id',
                 ]);
                 if ($validateParent->fails()) {
                     return Response([
