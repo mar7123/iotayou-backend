@@ -163,8 +163,6 @@ class UserController extends Controller
         try {
             $validateUser = Validator::make($request->all(), [
                 'user_id' => 'required|uuid|exists:users,user_id',
-                'username' => 'required|unique:users,username',
-                'email' => 'required|email|unique:users,email',
                 'name' => 'required',
                 'password' => 'required',
                 'status' => 'integer|between:6,7',
@@ -175,7 +173,32 @@ class UserController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            $role = User::where('user_id', $request->user_id)->first()->role()->first();
+            $user = User::where('user_id', $request->user_id)->first();
+            if ($user->username != $request->username) {
+                $validateUnique = Validator::make($request->all(), [
+                    'username' => 'required|unique:users,username',
+                ]);
+                if ($validateUnique->fails()) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'validation_error',
+                        'errors' => $validateUnique->errors()
+                    ], 401);
+                }
+            }
+            if ($user->email != $request->email) {
+                $validateUnique = Validator::make($request->all(), [
+                    'email' => 'required|unique:users,email',
+                ]);
+                if ($validateUnique->fails()) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'validation_error',
+                        'errors' => $validateUnique->errors()
+                    ], 401);
+                }
+            }
+            $role = $user->role()->first();
             $req_role = $request->user()
                 ->role()
                 ->first();

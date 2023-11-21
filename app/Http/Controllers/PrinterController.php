@@ -14,21 +14,26 @@ class PrinterController extends Controller
     public function deviceList(Request $request): Response
     {
         try {
-            $usr = new Collection([$request->user()]);
-            $type = $usr->first()->user_type;
-            if ($type <= 2) {
-                $usr = $usr->first()->children()->get();
-                if ($type <= 1) {
-                    $adm = new Collection();
-                    foreach ($usr as $cl) {
-                        $temp = $cl->children()->get();
-                        $adm = $adm->concat($temp);
-                    }
-                    $usr = $adm;
+            $req_role = $request->user()->role()->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', 5)->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $result = $req_role->children()->get();
+            while ($result->first()->role_type != 3) {
+                $temp = new Collection();
+                foreach ($result as $rs) {
+                    $ch = $rs->children()
+                        ->get();
+                    $temp = $temp->concat($ch);
                 }
+                $result = $temp;
             }
             $st = new Collection();
-            foreach ($usr as $cu) {
+            foreach ($result as $cu) {
                 $temp = $cu->sites()->get();
                 $st = $st->concat($temp);
             }
@@ -37,12 +42,6 @@ class PrinterController extends Controller
                 $temp = $site->printers()->get();
                 $pr = $pr->concat($temp);
             }
-            activity()
-                ->causedBy($request->user())
-                ->performedOn($pr->first())
-                ->withProperties($pr)
-                ->event('retrieved')
-                ->log('listed devices');
             return Response([
                 'status' => true,
                 'data' => $pr,

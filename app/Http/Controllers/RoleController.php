@@ -95,7 +95,6 @@ class RoleController extends Controller
         try {
             $validateRole = Validator::make($request->all(), [
                 'role_id' => 'required|uuid|exists:roles,role_id',
-                'code' => 'required|unique:roles,code',
                 'name' => 'required',
                 'address' => 'required',
                 'status' => 'integer|between:6,7',
@@ -108,6 +107,18 @@ class RoleController extends Controller
                 ], 401);
             }
             $role = Role::where('role_id', $request->role_id)->first();
+            if ($role->code != $request->code) {
+                $validateUnique = Validator::make($request->all(), [
+                    'code' => 'required|unique:roles,code',
+                ]);
+                if ($validateUnique->fails()) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'validation_error',
+                        'errors' => $validateUnique->errors()
+                    ], 401);
+                }
+            }
             $req_role = $request->user()
                 ->role()
                 ->first();
