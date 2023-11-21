@@ -164,7 +164,6 @@ class UserController extends Controller
             $validateUser = Validator::make($request->all(), [
                 'user_id' => 'required|uuid|exists:users,user_id',
                 'name' => 'required',
-                'password' => 'required',
                 'status' => 'integer|between:6,7',
             ]);
             if ($validateUser->fails()) {
@@ -223,18 +222,22 @@ class UserController extends Controller
                 ], 401);
             }
             $user = User::where('user_id', $request->user_id)->first();
-            $salt = Str::random(10);
             $user->update([
                 'username' => $request->username,
                 'email' => $request->email,
                 'name' => $request->name,
-                'salt' => $salt,
-                'password' => Hash::make($request->password . $salt),
                 'status' => $request->status,
                 'notes' => $request->notes,
                 'phone_num' => $request->phone_num,
                 'picture' => $request->picture,
             ]);
+            if ($request->password != null){
+                $salt = Str::random(10);
+                $user->update([
+                    'salt' => $salt,
+                    'password' => Hash::make($request->password . $salt),
+                ]);
+            }
             activity()
                 ->causedBy($request->user())
                 ->performedOn($user)
