@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\Site;
 use App\Models\User;
+use App\Models\UserGroups;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,11 +14,17 @@ use Throwable;
 
 class SiteController extends Controller
 {
+    private $user_group_id;
+    function __construct()
+    {
+        $ug = UserGroups::where('name', 'Site')->first();
+        $this->user_group_id = $ug->user_group_id;
+    }
     public function getSites(Request $request): Response
     {
         try {
             $req_role = $request->user()->role()->first();
-            $permission = $req_role->role_permissions()->where('user_group_id', 4)->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', $this->user_group_id)->first();
             if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
@@ -77,7 +84,7 @@ class SiteController extends Controller
             $parent = $req_role;
             $permission = $parent
                 ->role_permissions()
-                ->where('user_group_id', 4)
+                ->where('user_group_id', $this->user_group_id)
                 ->first();
             if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
                 return Response([
@@ -162,7 +169,7 @@ class SiteController extends Controller
             }
             $permission = $req_role
                 ->role_permissions()
-                ->where('user_group_id', 4)
+                ->where('user_group_id', $this->user_group_id)
                 ->first();
             if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
                 return Response([
@@ -230,7 +237,7 @@ class SiteController extends Controller
             }
             $permission = $req_role
                 ->role_permissions()
-                ->where('user_group_id', 4)
+                ->where('user_group_id', $this->user_group_id)
                 ->first();
             if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
                 return Response([

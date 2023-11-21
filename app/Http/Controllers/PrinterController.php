@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Printer;
 use App\Models\Site;
+use App\Models\UserGroups;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -12,11 +13,17 @@ use Throwable;
 
 class PrinterController extends Controller
 {
+    private $user_group_id;
+    function __construct()
+    {
+        $ug = UserGroups::where('name', 'Printer')->first();
+        $this->user_group_id = $ug->user_group_id;
+    }
     public function deviceList(Request $request): Response
     {
         try {
             $req_role = $request->user()->role()->first();
-            $permission = $req_role->role_permissions()->where('user_group_id', 5)->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', $this->user_group_id)->first();
             if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
@@ -80,7 +87,7 @@ class PrinterController extends Controller
             $req_role = $request->user()->role()->first();
             $permission = $req_role
                 ->role_permissions()
-                ->where('user_group_id', 5)
+                ->where('user_group_id', $this->user_group_id)
                 ->first();
             if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
                 return Response([
@@ -149,7 +156,7 @@ class PrinterController extends Controller
             }
             $permission = $req_role
                 ->role_permissions()
-                ->where('user_group_id', 5)
+                ->where('user_group_id', $this->user_group_id)
                 ->first();
             if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
                 return Response([
@@ -217,7 +224,7 @@ class PrinterController extends Controller
             }
             $permission = $req_role
                 ->role_permissions()
-                ->where('user_group_id', 5)
+                ->where('user_group_id', $this->user_group_id)
                 ->first();
             if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
                 return Response([

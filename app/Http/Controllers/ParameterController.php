@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Parameter;
+use App\Models\UserGroups;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -10,9 +11,23 @@ use Throwable;
 
 class ParameterController extends Controller
 {
+    private $user_group_id;
+    function __construct()
+    {
+        $ug = UserGroups::where('name', 'Parameter')->first();
+        $this->user_group_id = $ug->user_group_id;
+    }
     public function getParameters(Request $request): Response
     {
         try {
+            $req_role = $request->user()->role()->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', $this->user_group_id)->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
             $result = Parameter::get();
             return Response([
                 'status' => true,
@@ -28,6 +43,14 @@ class ParameterController extends Controller
     public function getParameterByInstrument(Request $request, string $ins_id): Response
     {
         try {
+            $req_role = $request->user()->role()->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', $this->user_group_id)->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
             $result = Parameter::where('instrument_id', $ins_id)->get();
             return Response([
                 'status' => true,
@@ -44,11 +67,10 @@ class ParameterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                "instrument_id" => 'required',
-                "code" => 'required',
-                "name" => 'required',
-                "status" => 'required',
-                "notes" => 'required',
+                "instrument_id" => "required|uuid|exists:instruments,instrument_id",
+                'code' => 'required|unique:parameters,code',
+                'name' => 'required',
+                'status' => 'integer|between:6,7',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -57,12 +79,17 @@ class ParameterController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            // if ($request->user()->user_type >= $request->user_type) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
+            $req_role = $request->user()->role()->first();
+            $permission = $req_role
+                ->role_permissions()
+                ->where('user_group_id', $this->user_group_id)
+                ->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
             $parameter = Parameter::create([
                 "instrument_id" => $request->instrument_id,
                 "code" => $request->code,
@@ -85,7 +112,7 @@ class ParameterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'parameter_id' => 'required',
+                'parameter_id' => 'required|uuid|exists:parameters,parameter_id',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -94,19 +121,32 @@ class ParameterController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            $reg = Parameter::where('parameter_id', $request->parameter_id)->first();
-            if ($reg == null) {
+            $req_role = $request->user()
+                ->role()
+                ->first();
+            $permission = $req_role
+                ->role_permissions()
+                ->where('user_group_id', $this->user_group_id)
+                ->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
-                    'data' => 'Parameter not found',
+                    'data' => 'Unauthorized',
                 ], 401);
             }
-            // if ($request->user()->user_type >= $reg->user_type) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
+            $reg = Parameter::where('parameter_id', $request->parameter_id)->first();
+            if ($reg->code != $request->code) {
+                $validateUnique = Validator::make($request->all(), [
+                    'code' => 'required|unique:parameters,code',
+                ]);
+                if ($validateUnique->fails()) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'validation_error',
+                        'errors' => $validateUnique->errors()
+                    ], 401);
+                }
+            }
             $reg->update($request->except(['parameter_id']));
             return Response([
                 'status' => true,
@@ -123,7 +163,7 @@ class ParameterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'parameter_id' => 'required',
+                'parameter_id' => 'required|uuid|exists:parameters,parameter_id',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -132,19 +172,20 @@ class ParameterController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            $reg = Parameter::where('parameter_id', $request->parameter_id)->first();
-            if ($reg == null) {
+            $req_role = $request->user()
+                ->role()
+                ->first();
+            $permission = $req_role
+                ->role_permissions()
+                ->where('user_group_id', $this->user_group_id)
+                ->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
-                    'data' => 'Parameter not found',
+                    'data' => 'Unauthorized',
                 ], 401);
             }
-            // if ($request->user()->user_type >= $reg->user_type) {
-            //     return Response([
-            //         'status' => false,
-            //         'data' => 'Unauthorized',
-            //     ], 401);
-            // }
+            $reg = Parameter::where('parameter_id', $request->parameter_id)->first();
             $reg->delete();
             return Response([
                 'status' => true,

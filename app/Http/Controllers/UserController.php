@@ -344,7 +344,7 @@ class UserController extends Controller
             $users = $users->concat($user_temp);
             return Response([
                 'status' => true,
-                'message' => $users,
+                'data' => $users,
             ], 200);
         } catch (Throwable $th) {
             return Response([
