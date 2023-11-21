@@ -56,6 +56,7 @@ class SiteController extends Controller
             $validateUser = Validator::make($request->all(), [
                 'code' => 'required|unique:sites,code',
                 'name' => 'required',
+                'location' => 'required',
                 'address' => 'required',
                 'status' => 'integer|between:6,7',
             ]);
@@ -103,7 +104,7 @@ class SiteController extends Controller
                 }
             }
             $site = Site::create([
-                "customer_id" => $parent->user_id,
+                "customer_id" => $parent->role_id,
                 "code" => $request->code,
                 "name" => $request->name,
                 "address" => $request->address,
