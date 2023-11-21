@@ -74,8 +74,6 @@ class SiteController extends Controller
             // }
             $parent = $request->user()->role()->first();
             $permission = $parent
-                ->role()
-                ->first()
                 ->role_permissions()
                 ->where('user_group_id', 4)
                 ->first();
