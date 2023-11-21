@@ -25,7 +25,7 @@ return new class extends Migration
             $table->uuid('user_role_id');
             $table->foreign('user_role_id')->references('role_id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->string('phone_num', 20);
+            $table->string('phone_num', 20)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('picture', 100)->nullable();
 
