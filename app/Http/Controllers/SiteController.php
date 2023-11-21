@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -71,7 +72,7 @@ class SiteController extends Controller
             //         'data' => 'Unauthorized',
             //     ], 401);
             // }
-            $parent = $request->user();
+            $parent = $request->user()->role()->first();
             $permission = $parent
                 ->role()
                 ->first()
@@ -84,7 +85,7 @@ class SiteController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            if ($parent->user_type != 3) {
+            if ($parent->role_type != 3) {
                 $validateParent = Validator::make($request->all(), [
                     'customer_id' => 'required|uuid|exists:roles,role_id'
                 ]);
@@ -95,8 +96,8 @@ class SiteController extends Controller
                         'errors' => $validateParent->errors()
                     ], 401);
                 }
-                $parent = User::where('user_id', $request->customer_id)->first();
-                if ($parent->user_type != 3) {
+                $parent = Role::where('role_id', $request->customer_id)->first();
+                if ($parent->role_type != 3) {
                     return Response([
                         'status' => false,
                         'message' => 'invalid customer id',

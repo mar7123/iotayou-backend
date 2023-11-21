@@ -48,7 +48,7 @@ class PrinterController extends Controller
             ], 200);
         } catch (Throwable $th) {
             return Response([
-                'status' => false,
+                'status' => true,
                 'message' => $th->getMessage()
             ], 500);
         }
