@@ -231,7 +231,7 @@ class UserController extends Controller
                 'phone_num' => $request->phone_num,
                 'picture' => $request->picture,
             ]);
-            if ($request->password != null){
+            if ($request->password != null || $request->password != ""){
                 $salt = Str::random(10);
                 $user->update([
                     'salt' => $salt,
