@@ -73,7 +73,8 @@ class SiteController extends Controller
             //         'data' => 'Unauthorized',
             //     ], 401);
             // }
-            $parent = $request->user()->role()->first();
+            $req_role = $request->user()->role()->first();
+            $parent = $req_role;
             $permission = $parent
                 ->role_permissions()
                 ->where('user_group_id', 4)
@@ -96,10 +97,14 @@ class SiteController extends Controller
                     ], 401);
                 }
                 $parent = Role::where('role_id', $request->customer_id)->first();
-                if ($parent->role_type != 3) {
+                $temp = $parent;
+                while ($temp->parent()->first() != null && $temp->role_type != $req_role->role_type) {
+                    $temp = $temp->parent()->first();
+                }
+                if ($temp->role_id != $req_role->role_id) {
                     return Response([
                         'status' => false,
-                        'message' => 'invalid customer id',
+                        'message' => 'Unauthorized',
                     ], 401);
                 }
             }

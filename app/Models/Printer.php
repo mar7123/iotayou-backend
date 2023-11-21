@@ -21,22 +21,8 @@ class Printer extends Model
         "instrument_id",
         "code",
         "name",
-        "ip_addr",
-        "printer_port",
-        "image",
-        "location",
-        "coordinate",
         "status",
         "notes",
-    ];
-    protected $hidden = [
-        "ip_addr",
-        "printer_port",
-        "image",
-        "location",
-        "coordinate",
-        "created_at",
-        "updated_at",
     ];
     public $incrementing = false;
     public $timestamps = true;

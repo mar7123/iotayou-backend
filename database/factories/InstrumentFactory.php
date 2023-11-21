@@ -17,7 +17,7 @@ class InstrumentFactory extends Factory
      */
     public function definition(): array
     {
-        $code = "D" . fake()->randomElement(["120", "320", "620"]) . "i";
+        $code = "D" . fake()->numberBetween(120, 620) . 'i';
         return [
             "code" => $code,
             "name" => "Domino Laser " . $code,

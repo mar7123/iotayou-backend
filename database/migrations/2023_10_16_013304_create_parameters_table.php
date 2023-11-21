@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parameters', function (Blueprint $table) {
-            $table->integer('parameter_id')->autoIncrement();
-            $table->integer('instrument_id')->nullable();
-            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->nullOnDelete();
-            $table->string('code', 20);
+            $table->uuid('parameter_id')->primary();
+            $table->uuid('instrument_id')->nullable();
+            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->cascadeOnUpdate()->nullOnDelete();
+            $table->string('code', 20)->unique();
             $table->string('name', 50);
             $table->smallInteger('status');
             $table->text('notes')->nullable();

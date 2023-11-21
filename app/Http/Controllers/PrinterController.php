@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Printer;
+use App\Models\Site;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -57,14 +58,11 @@ class PrinterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'site_id' => 'required',
-                'instrument_id' => 'required',
-                "code" => 'required',
-                "name" => 'required',
-                "ip_addr" => 'required',
-                "printer_port" => 'required',
-                "status" => 'required',
-                "notes" => 'required',
+                'site_id' => 'required|uuid|exists:sites,site_id',
+                'instrument_id' => 'required|uuid|exists:instruments,instrument_id',
+                'code' => 'required|unique:printers,code',
+                'name' => 'required',
+                'status' => 'integer|between:6,7',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -79,13 +77,32 @@ class PrinterController extends Controller
             //         'data' => 'Unauthorized',
             //     ], 401);
             // }
+            $req_role = $request->user()->role()->first();
+            $permission = $req_role
+                ->role_permissions()
+                ->where('user_group_id', 5)
+                ->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            $temp = Site::where('site_id', $request->site_id)->first()->customers()->first();
+            while ($temp->parent()->first() != null && $temp->role_type != $req_role->role_type) {
+                $temp = $temp->parent()->first();
+            }
+            if ($temp->role_id != $req_role->role_id) {
+                return Response([
+                    'status' => false,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
             $printer = Printer::create([
                 'site_id' => $request->site_id,
                 'instrument_id' => $request->instrument_id,
                 "code" => $request->code,
                 "name" => $request->name,
-                "ip_addr" => $request->ip_addr,
-                "printer_port" => $request->printer_port,
                 "status" => $request->status,
                 "notes" => $request->notes,
             ]);
@@ -104,7 +121,9 @@ class PrinterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'printer_id' => 'required',
+                'printer_id' => 'required|uuid|exists:printers,printer_id',
+                'name' => 'required',
+                'status' => 'integer|between:6,7',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -114,11 +133,41 @@ class PrinterController extends Controller
                 ], 401);
             }
             $reg = Printer::where('printer_id', $request->printer_id)->first();
-            if ($reg == null) {
+            $role = $reg->sites()->first()->customers()->first();
+            $req_role = $request->user()
+                ->role()
+                ->first();
+            $temp = $role;
+            while ($temp->parent()->first() != null && $temp->role_type != $req_role->role_type) {
+                $temp = $temp->parent()->first();
+            }
+            if ($temp->role_id != $req_role->role_id) {
                 return Response([
                     'status' => false,
-                    'data' => 'Printer not found',
+                    'message' => 'Unauthorized',
                 ], 401);
+            }
+            $permission = $req_role
+                ->role_permissions()
+                ->where('user_group_id', 5)
+                ->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            if ($reg->code != $request->code) {
+                $validateUnique = Validator::make($request->all(), [
+                    'code' => 'required|unique:printers,code',
+                ]);
+                if ($validateUnique->fails()) {
+                    return Response([
+                        'status' => false,
+                        'message' => 'validation_error',
+                        'errors' => $validateUnique->errors()
+                    ], 401);
+                }
             }
             // if ($request->user()->user_type >= $reg->user_type) {
             //     return Response([
@@ -142,7 +191,7 @@ class PrinterController extends Controller
     {
         try {
             $validateUser = Validator::make($request->all(), [
-                'printer_id' => 'required',
+                'printer_id' => 'required|uuid|exists:printers,printer_id',
             ]);
             if ($validateUser->fails()) {
                 return Response([
@@ -152,10 +201,28 @@ class PrinterController extends Controller
                 ], 401);
             }
             $reg = Printer::where('printer_id', $request->printer_id)->first();
-            if ($reg == null) {
+            $role = $reg->sites()->first()->customers()->first();
+            $req_role = $request->user()
+                ->role()
+                ->first();
+            $temp = $role;
+            while ($temp->parent()->first() != null && $temp->role_type != $req_role->role_type) {
+                $temp = $temp->parent()->first();
+            }
+            if ($temp->role_id != $req_role->role_id) {
                 return Response([
                     'status' => false,
-                    'data' => 'Printer not found',
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+            $permission = $req_role
+                ->role_permissions()
+                ->where('user_group_id', 5)
+                ->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
                 ], 401);
             }
             // if ($request->user()->user_type >= $reg->user_type) {

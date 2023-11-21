@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTime;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Alarm extends Pivot
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $table = "alarms";
     protected $primaryKey = "alarm_id";
-    protected $keyType = "integer";
+    protected $keyType = "string";
     protected $fillable = [
         "printer_id",
         "parameter_id",
@@ -32,7 +33,7 @@ class Alarm extends Pivot
     protected $appends = [
         "duration"
     ];
-    public $incrementing = true;
+    public $incrementing = false;
     public $timestamps = true;
 
     public function printers(): BelongsTo

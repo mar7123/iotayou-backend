@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('instruments', function (Blueprint $table) {
-            $table->integer('instrument_id')->autoIncrement();
-            $table->string('code', 20);
+            $table->uuid('instrument_id')->primary();
+            $table->string('code', 20)->unique();
             $table->string('name', 100);
             $table->smallInteger('status');
             $table->text('notes')->nullable();

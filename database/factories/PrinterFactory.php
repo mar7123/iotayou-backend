@@ -20,8 +20,6 @@ class PrinterFactory extends Factory
         return [
             "code" => fake()->firstName(),
             "name" => "Printer " . fake()->name(),
-            "ip_addr" => "192.168." . fake()->numberBetween(0, 255) . "." . fake()->numberBetween(0, 255),
-            "printer_port" => 2000,
             "status" => 6,
         ];
     }

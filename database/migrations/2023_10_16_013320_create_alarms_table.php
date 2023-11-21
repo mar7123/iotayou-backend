@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('alarms', function (Blueprint $table) {
-            $table->integer('alarm_id')->autoIncrement();
+            $table->uuid('alarm_id')->primary();
             $table->uuid('printer_id');
             $table->foreign('printer_id')->references('printer_id')->on('printers')->cascadeOnDelete();
-            $table->integer('parameter_id');
+            $table->uuid('parameter_id');
             $table->foreign('parameter_id')->references('parameter_id')->on('parameters')->cascadeOnDelete();
             $table->string('name', 50);
             $table->string('condition', 50);

@@ -14,16 +14,11 @@ return new class extends Migration
         Schema::create('printers', function (Blueprint $table) {
             $table->uuid('printer_id')->primary();
             $table->uuid('site_id')->nullable();
-            $table->foreign('site_id')->references('site_id')->on('sites')->nullOnDelete();
-            $table->integer('instrument_id')->nullable();
-            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->nullOnDelete();
-            $table->string('code', 100);
+            $table->foreign('site_id')->references('site_id')->on('sites')->cascadeOnUpdate()->nullOnDelete();
+            $table->uuid('instrument_id')->nullable();
+            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->cascadeOnUpdate()->nullOnDelete();
+            $table->string('code', 20)->unique();
             $table->string('name', 100);
-            $table->string('ip_addr', 15);
-            $table->smallInteger('printer_port');
-            $table->string('image', 100)->nullable();
-            $table->string('location', 100)->nullable();
-            $table->string('coordinate', 100)->nullable();
             $table->smallInteger('status');
             $table->text('notes')->nullable();
             $table->timestamps();
