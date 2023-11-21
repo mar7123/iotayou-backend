@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('condition', 50);
             $table->smallInteger('status');
             $table->text('notes')->nullable();
-            $table->timestamp('occured_at')->nullable();
-            $table->timestamp('solved_at')->nullable();
+            // $table->timestamp('occured_at')->nullable();
+            // $table->timestamp('solved_at')->nullable();
             $table->timestamps();
         });
     }

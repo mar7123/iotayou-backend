@@ -25,6 +25,9 @@ class Site extends Model
         "status",
         "notes"
     ];
+    protected $appends = [
+        'statuslang',
+    ];
     public $incrementing = false;
     public $timestamps = true;
 
@@ -39,5 +42,10 @@ class Site extends Model
     public function printers(): HasMany
     {
         return $this->hasMany(Printer::class, "site_id", "site_id");
+    }
+    protected function getStatusLangAttribute()
+    {
+        $lang = $this->language()->first();
+        return $lang->lang;
     }
 }

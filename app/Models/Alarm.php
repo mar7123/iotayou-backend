@@ -23,19 +23,20 @@ class Alarm extends Pivot
         "condition",
         "status",
         "notes",
-        "occured_at",
-        "solved_at"
-    ];
-    protected $hidden = [
-        "created_at",
-        "updated_at",
+        // "occured_at",
+        // "solved_at"
     ];
     protected $appends = [
-        "duration"
+        'statuslang',
+        // "duration"
     ];
     public $incrementing = false;
     public $timestamps = true;
 
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class, "status", "id");
+    }
     public function printers(): BelongsTo
     {
         return $this->belongsTo(Printer::class, "printer_id", "printer_id");
@@ -44,16 +45,21 @@ class Alarm extends Pivot
     {
         return $this->belongsTo(Parameter::class, "parameter_id", "parameter_id");
     }
-    public function getDurationAttribute(): string
+    // public function getDurationAttribute(): string
+    // {
+    //     if ($this->solved_at == null) {
+    //         $time = new DateTime();
+    //         $timenow = $time->getTimestamp();
+    //         $diff =  $timenow - strtotime($this->occured_at);
+    //         return ($diff / 60) . ' minutes';
+    //     } else {
+    //         $diff = strtotime($this->solved_at) - strtotime($this->occured_at);
+    //         return ($diff / 60) . ' minutes';
+    //     }
+    // }
+    protected function getStatusLangAttribute()
     {
-        if ($this->solved_at == null) {
-            $time = new DateTime();
-            $timenow = $time->getTimestamp();
-            $diff =  $timenow - strtotime($this->occured_at);
-            return ($diff / 60) . ' minutes';
-        } else {
-            $diff = strtotime($this->solved_at) - strtotime($this->occured_at);
-            return ($diff / 60) . ' minutes';
-        }
+        $lang = $this->language()->first();
+        return $lang->lang;
     }
 }

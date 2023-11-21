@@ -19,7 +19,7 @@ class AlarmFactory extends Factory
     {
         $time = new DateTime();
         $timenow = $time->format('Y-m-d H:i:s');
-        $status = fake()->numberBetween(1, 3);
+        $status = fake()->numberBetween(6, 7);
         $solved_at = null;
         if($status == 3){
             $solved_at = $time->modify('+5 minutes');
@@ -29,8 +29,8 @@ class AlarmFactory extends Factory
             "name" => fake()->sentence(2),
             "condition" => fake()->randomElement(['<', '>']) .  fake()->numberBetween(7, 15),
             "status" => $status,
-            "occured_at" => $timenow,
-            "solved_at" => $solved_at
+            // "occured_at" => $timenow,
+            // "solved_at" => $solved_at
         ];
     }
 }

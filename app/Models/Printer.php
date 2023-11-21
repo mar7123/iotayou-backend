@@ -24,6 +24,9 @@ class Printer extends Model
         "status",
         "notes",
     ];
+    protected $appends = [
+        'statuslang',
+    ];
     public $incrementing = false;
     public $timestamps = true;
 
@@ -33,6 +36,10 @@ class Printer extends Model
             ->using(Alarms::class)
             ->withPivot(["alarm_id", "name", "condition", "status", "notes", "occured_at", "solved_at"])
             ->withTimestamps();
+    }
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class, "status", "id");
     }
     public function sites(): BelongsTo
     {
@@ -45,5 +52,10 @@ class Printer extends Model
     public function alarms(): HasMany
     {
         return $this->hasMany(Alarm::class, 'printer_id', 'printer_id');
+    }
+    protected function getStatusLangAttribute()
+    {
+        $lang = $this->language()->first();
+        return $lang->lang;
     }
 }
