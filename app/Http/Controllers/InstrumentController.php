@@ -20,9 +20,10 @@ class InstrumentController extends Controller
     public function getInstruments(Request $request): Response
     {
         try {
-            $req_role = $request->user()->role()->first();
-            $permission = $req_role->role_permissions()->where('user_group_id', $this->user_group_id)->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
+            $req_user = $request->user();
+            $req_role = $req_user->role()->first();
+            $permission = $req_user->user_permissions()->where('user_group_id', $this->user_group_id)->first();
+            if ($permission == null || substr($permission->pivot->user_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -55,12 +56,13 @@ class InstrumentController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            $req_role = $request->user()->role()->first();
-            $permission = $req_role
-                ->role_permissions()
+            $req_user = $request->user();
+            $req_role = $req_user->role()->first();
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $this->user_group_id)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
+            if ($permission == null || substr($permission->pivot->user_permission, 1, 1) != "a") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -98,14 +100,15 @@ class InstrumentController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $this->user_group_id)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
+            if ($permission == null || substr($permission->pivot->user_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -149,14 +152,15 @@ class InstrumentController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $this->user_group_id)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
+            if ($permission == null || substr($permission->pivot->user_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',

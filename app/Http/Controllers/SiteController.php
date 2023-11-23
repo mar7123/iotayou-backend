@@ -23,9 +23,10 @@ class SiteController extends Controller
     public function getSites(Request $request): Response
     {
         try {
-            $req_role = $request->user()->role()->first();
-            $permission = $req_role->role_permissions()->where('user_group_id', $this->user_group_id)->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
+            $req_user = $request->user();
+            $req_role = $req_user->role()->first();
+            $permission = $req_user->user_permissions()->where('user_group_id', $this->user_group_id)->first();
+            if ($permission == null || substr($permission->pivot->user_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -80,13 +81,14 @@ class SiteController extends Controller
             //         'data' => 'Unauthorized',
             //     ], 401);
             // }
-            $req_role = $request->user()->role()->first();
+            $req_user = $request->user();
+            $req_role = $req_user->role()->first();
             $parent = $req_role;
-            $permission = $parent
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $this->user_group_id)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
+            if ($permission == null || substr($permission->pivot->user_permission, 1, 1) != "a") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -154,7 +156,8 @@ class SiteController extends Controller
             }
             $reg = Site::where('site_id', $request->site_id)->first();
             $role = $reg->customers()->first();
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
             $temp = $role;
@@ -167,11 +170,11 @@ class SiteController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $this->user_group_id)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
+            if ($permission == null || substr($permission->pivot->user_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -222,7 +225,8 @@ class SiteController extends Controller
             }
             $reg = Site::where('site_id', $request->site_id)->first();
             $role = $reg->customers()->first();
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
             $temp = $role;
@@ -235,11 +239,11 @@ class SiteController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $this->user_group_id)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
+            if ($permission == null || substr($permission->pivot->user_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',

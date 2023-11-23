@@ -15,13 +15,13 @@ class Permission extends Pivot
     protected $keyType = "integer";
     protected $fillable = [
         'user_group',
-        'role',
-        'role_permission',
+        'user',
+        'user_permission',
     ];
     protected $hidden = [
         'permission_id',
         'user_group',
-        'role',
+        'user',
     ];
     public $incrementing = true;
     public $timestamps = true;
@@ -29,8 +29,8 @@ class Permission extends Pivot
     {
         return $this->belongsTo(UserGroups::class, "user_group", "user_group_id");
     }
-    public function role(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Role::class, "role", "role_id");
+        return $this->belongsTo(User::class, "user", "user_id");
     }
 }

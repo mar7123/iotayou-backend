@@ -8,6 +8,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -44,6 +46,21 @@ class User extends Authenticatable
     ];
     public $incrementing = false;
     public $timestamps = true;
+
+    // many to many
+    public function user_permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroups::class, 'permissions', 'user', 'user_group')
+            ->using(Permission::class)
+            ->withPivot(['permission_id', 'user_permission'])
+            ->withTimestamps();
+    }
+
+    // one to many
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(Permission::class, 'user', 'user_id');
+    }
 
     // many to one
     public function role(): BelongsTo

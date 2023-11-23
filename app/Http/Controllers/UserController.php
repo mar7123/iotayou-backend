@@ -105,7 +105,8 @@ class UserController extends Controller
                 ], 401);
             }
             $role = Role::where('role_id', $request->user_role_id)->first();
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
             $temp = $role;
@@ -118,11 +119,11 @@ class UserController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
+            if ($permission == null || substr($permission->pivot->user_permission, 1, 1) != "a") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -198,7 +199,8 @@ class UserController extends Controller
                 }
             }
             $role = $user->role()->first();
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
             $temp = $role;
@@ -211,11 +213,11 @@ class UserController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
+            if ($permission == null || substr($permission->pivot->user_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -231,7 +233,7 @@ class UserController extends Controller
                 'phone_num' => $request->phone_num,
                 'picture' => $request->picture,
             ]);
-            if ($request->password != null || $request->password != ""){
+            if ($request->password != null || $request->password != "") {
                 $salt = Str::random(10);
                 $user->update([
                     'salt' => $salt,
@@ -268,7 +270,8 @@ class UserController extends Controller
                 ], 401);
             }
             $role = User::where('user_id', $request->user_id)->first()->role()->first();
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
             $temp = $role;
@@ -281,12 +284,12 @@ class UserController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role
-                ->role_permissions()
+            $permission = $req_user
+                ->user_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
 
-            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
+            if ($permission == null || substr($permission->pivot->user_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -314,13 +317,10 @@ class UserController extends Controller
     public function getUsers(Request $request): Response
     {
         try {
-            $req_role = $request->user()
+            $req_user = $request->user();
+            $req_role = $req_user
                 ->role()
                 ->first();
-            $temp = $req_role;
-            while ($temp->parent()->first() != null && $temp->role_type != $req_role->role_type) {
-                $temp = $temp->parent()->first();
-            }
             $result = $req_role->children()->get();
             $users = new Collection();
             while ($result->first()->role_type != 3) {
@@ -339,15 +339,57 @@ class UserController extends Controller
                 }
                 $result = $temp;
             }
+            $user_temp = new Collection();
             foreach ($result as $rs) {
                 $us = $rs->users()
                     ->get();
                 $user_temp = $user_temp->concat($us);
             }
             $users = $users->concat($user_temp);
+            if ($request->input('permission') == "true") {
+                foreach ($users as $us) {
+                    $us->load(['user_permissions']);
+                }
+            }
             return Response([
                 'status' => true,
                 'data' => $users,
+            ], 200);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    public function assignUserPermission(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'user_id' => 'required|uuid|exists:users,user_id',
+                'user_permissions' => 'required|array',
+                'user_permissions.*.user_group_id' => 'required|exists:user_groups,user_group_id',
+                'user_permissions.*.user_permission' => 'required|alpha_dash|size:4',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            $user = User::where('user_id', $request->user_id)->first();
+            $role = $user->role()->first();
+            $perms = array();
+            foreach($request->user_permissions as $up){
+                if($up["user_group_id"] <= $role["role_type"]){
+                    continue;
+                }
+                $perms[$up["user_group_id"]] = ['user_permission' => $up["user_permission"]];
+            }
+            $user->user_permissions()->sync($perms);
+            return Response([
+                'status' => true,
+                'data' => "permission updated",
             ], 200);
         } catch (Throwable $th) {
             return Response([

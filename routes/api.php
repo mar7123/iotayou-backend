@@ -28,8 +28,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         $request->user()->tokens()->update(['expires_at' => $expiry]);
         $result = $request->user()
             ->load([
-                'role.user_groups',
-                'role.role_permissions'
+                'user_permissions',
+                'role.user_groups'
             ]);
         $result->role->setVisible(['user_groups', 'role_permissions']);
         return  $result;
@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/user/create', [UserController::class, 'createUser']);
     Route::post('/user/update', [UserController::class, 'updateUser']);
     Route::post('/user/delete', [UserController::class, 'deleteUser']);
+    Route::post('/user/permission', [UserController::class, 'assignUserPermission']);
 
     // Role CRUD
     Route::post('/role/create', [RoleController::class, 'newRole']);

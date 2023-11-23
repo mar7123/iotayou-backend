@@ -22,26 +22,26 @@ class PermissionSeeder extends Seeder
         //     'prod_sup.png',
         //     'prod_sup.png',
         // ];
-        $adm = \App\Models\Role::where('code', 'admin')->first();
-        $adm_user_group = $user_group_id->where('user_group_id', '!=', $adm->role_type);
+        $adm = \App\Models\User::where('email', 'admin123@email.com')->first();
+        $adm_user_group = $user_group_id->where('user_group_id', '!=', $adm->role()->first()->role_type);
         foreach ($adm_user_group as $aug) {
             \App\Models\Permission::factory()
                 ->count(1)
                 ->state([
-                    'role' => $adm->role_id,
+                    'user' => $adm->user_id,
                     'user_group' => $aug->user_group_id,
-                    'role_permission' => 'vaed',
+                    'user_permission' => 'vaed',
                 ])
                 ->create();
         }
-        $roles = \App\Models\Role::where('code', '!=', 'admin')->get();
-        foreach ($roles as $rl) {
-            $usr_group = $user_group_id->where('user_group_id', '>', $rl->role_type);
+        $users = \App\Models\User::where('email', '!=', 'admin123@email.com')->get();
+        foreach ($users as $us) {
+            $usr_group = $user_group_id->where('user_group_id', '>', $us->role()->first()->role_type);
             foreach ($usr_group as $ug) {
                 \App\Models\Permission::factory()
                     ->count(1)
                     ->state([
-                        'role' => $rl->role_id,
+                        'user' => $us->user_id,
                         'user_group' => $ug->user_group_id,
                     ])
                     ->create();
