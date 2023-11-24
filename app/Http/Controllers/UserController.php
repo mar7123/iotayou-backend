@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserGroups;
 use DateTime;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Activitylog\Models\Activity;
 use Throwable;
 
 class UserController extends Controller
@@ -48,6 +51,16 @@ class UserController extends Controller
                 $expiry = new DateTime();
                 $expiry->modify('+30 minutes');
                 $success =  $user->createToken('Login Token', ['*'], $expiry)->plainTextToken;
+
+                // attach permission
+                $attach_ug = UserGroups::whereDoesntHave('user_permissions', function (Builder $query) use ($user) {
+                    $query->where('users.user_id', $user->user_id);
+                })->where('user_group_id', '>', $user->role()->first()->role_type)->pluck('user_group_id');
+                if (!empty($attach_ug)) {
+                    $user->user_permissions()->attach($attach_ug, ['user_permission' => '----']);
+                }
+
+                // log
                 activity()
                     ->causedBy($user)
                     ->event('logged in')
@@ -362,6 +375,50 @@ class UserController extends Controller
             ], 500);
         }
     }
+    public function getUserLogs(Request $request): Response
+    {
+        try {
+            $req_user = $request->user();
+            $req_role = $req_user
+                ->role()
+                ->first();
+            $result = $req_role->children()->get();
+            $users = new Collection([$req_user->user_id]);
+            while ($result->first()->role_type != 3) {
+                $user_temp = new Collection();
+                foreach ($result as $rs) {
+                    $us = $rs->users()
+                        ->pluck('user_id');
+                    $user_temp = $user_temp->concat($us);
+                }
+                $users = $users->concat($user_temp);
+                $temp = new Collection();
+                foreach ($result as $rs) {
+                    $ch = $rs->children()
+                        ->get();
+                    $temp = $temp->concat($ch);
+                }
+                $result = $temp;
+            }
+            $user_temp = new Collection();
+            foreach ($result as $rs) {
+                $us = $rs->users()
+                    ->pluck('user_id');
+                $user_temp = $user_temp->concat($us);
+            }
+            $users = $users->concat($user_temp);
+            $logs = Activity::whereIn('causer_id', $users)->get();
+            return Response([
+                'status' => true,
+                'data' => $logs,
+            ], 200);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
     public function assignUserPermission(Request $request): Response
     {
         try {
@@ -387,6 +444,12 @@ class UserController extends Controller
                 $perms[$up["user_group_id"]] = ['user_permission' => $up["user_permission"]];
             }
             $user->user_permissions()->sync($perms);
+            activity()
+                ->causedBy($request->user())
+                ->performedOn($user)
+                ->withProperties($perms)
+                ->event('updated')
+                ->log('update permission');
             return Response([
                 'status' => true,
                 'data' => "permission updated",

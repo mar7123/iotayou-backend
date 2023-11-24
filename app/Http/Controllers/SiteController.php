@@ -126,6 +126,12 @@ class SiteController extends Controller
                 "status" => $request->status,
                 "notes" => $request->notes,
             ]);
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($site)
+                ->withProperties($site)
+                ->event('created')
+                ->log('created site');
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',
@@ -199,6 +205,12 @@ class SiteController extends Controller
             //     ], 401);
             // }
             $reg->update($request->except(['site_id']));
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('updated')
+                ->log('updated site');
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
@@ -250,6 +262,12 @@ class SiteController extends Controller
                 ], 401);
             }
             $reg->delete();
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('deleted')
+                ->log('deleted site');
             return Response([
                 'status' => true,
                 'message' => 'deleted successfully',

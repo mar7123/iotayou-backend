@@ -79,6 +79,12 @@ class RoleController extends Controller
                 'role_type' => $request->role_type,
                 'parent_id' => $parent->role_id,
             ]);
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($role)
+                ->withProperties($role)
+                ->event('created')
+                ->log('created ' . $role->role_t);
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',
@@ -149,6 +155,12 @@ class RoleController extends Controller
                 'parent_id',
                 'deleted_at'
             ]));
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($role)
+                ->withProperties($request->all())
+                ->event('updated')
+                ->log('updated ' . $role->role_t);
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
@@ -198,6 +210,12 @@ class RoleController extends Controller
                 ], 401);
             }
             $role->delete();
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($role)
+                ->withProperties($role)
+                ->event('deleted')
+                ->log('deleted ' . $role->role_t);
             return Response([
                 'status' => true,
                 'message' => 'deleted successfully',

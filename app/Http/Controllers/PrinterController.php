@@ -115,6 +115,12 @@ class PrinterController extends Controller
                 "status" => $request->status,
                 "notes" => $request->notes,
             ]);
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($printer)
+                ->withProperties($printer)
+                ->event('created')
+                ->log('created printer');
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',
@@ -186,6 +192,12 @@ class PrinterController extends Controller
             //     ], 401);
             // }
             $reg->update($request->except(['printer_id']));
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('updated')
+                ->log('updated printer');
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
@@ -243,6 +255,12 @@ class PrinterController extends Controller
             //     ], 401);
             // }
             $reg->delete();
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('deleted')
+                ->log('deleted printer');
             return Response([
                 'status' => true,
                 'message' => 'deleted successfully',

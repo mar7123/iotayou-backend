@@ -114,6 +114,12 @@ class AlarmController extends Controller
                 "status" => $request->status,
                 "notes" => $request->notes,
             ]);
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($alarm)
+                ->withProperties($alarm)
+                ->event('created')
+                ->log('created alarm');
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',
@@ -174,6 +180,12 @@ class AlarmController extends Controller
             //     ], 401);
             // }
             $reg->update($request->except(['alarm_id']));
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('updated')
+                ->log('updated alarm');
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
@@ -231,6 +243,12 @@ class AlarmController extends Controller
             //     ], 401);
             // }
             $reg->delete();
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('deleted')
+                ->log('deleted alarm');
             return Response([
                 'status' => true,
                 'message' => 'deleted successfully',

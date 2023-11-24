@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // User CRUD
     Route::get('/users', [UserController::class, 'getUsers']);
+    Route::get('/user/logs', [UserController::class, 'getUserLogs']);
     Route::post('/user/create', [UserController::class, 'createUser']);
     Route::post('/user/update', [UserController::class, 'updateUser']);
     Route::post('/user/delete', [UserController::class, 'deleteUser']);

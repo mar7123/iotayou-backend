@@ -71,6 +71,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Language::class, "status", "id");
     }
+
+    // appended attribute
     protected function getUserTypeAttribute()
     {
         $type = $this->role()->first()->user_groups()->first();

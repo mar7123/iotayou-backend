@@ -100,6 +100,12 @@ class ParameterController extends Controller
                 "status" => $request->status,
                 "notes" => $request->notes,
             ]);
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($parameter)
+                ->withProperties($parameter)
+                ->event('created')
+                ->log('created parameter');
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',
@@ -152,6 +158,12 @@ class ParameterController extends Controller
                 }
             }
             $reg->update($request->except(['parameter_id']));
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('updated')
+                ->log('updated parameter');
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
@@ -192,6 +204,12 @@ class ParameterController extends Controller
             }
             $reg = Parameter::where('parameter_id', $request->parameter_id)->first();
             $reg->delete();
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('deleted')
+                ->log('deleted parameter');
             return Response([
                 'status' => true,
                 'message' => 'deleted successfully',

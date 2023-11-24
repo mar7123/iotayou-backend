@@ -74,6 +74,12 @@ class InstrumentController extends Controller
                 "status" => $request->status,
                 "notes" => $request->notes,
             ]);
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($instrument)
+                ->withProperties($instrument)
+                ->event('created')
+                ->log('created instrument');
             return Response([
                 'status' => true,
                 'message' => 'Created successfully',
@@ -128,6 +134,12 @@ class InstrumentController extends Controller
                 }
             }
             $reg->update($request->except(['instrument_id']));
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('updated')
+                ->log('updated instrument');
             return Response([
                 'status' => true,
                 'message' => 'updated successfully',
@@ -168,6 +180,12 @@ class InstrumentController extends Controller
             }
             $reg = Instrument::where('instrument_id', $request->instrument_id)->first();
             $reg->delete();
+            activity()
+                ->causedBy($req_user)
+                ->performedOn($reg)
+                ->withProperties($reg)
+                ->event('deleted')
+                ->log('deleted instrument');
             return Response([
                 'status' => true,
                 'message' => 'deleted successfully',

@@ -27,6 +27,7 @@ class Role extends Model
     ];
     protected $appends = [
         'statuslang',
+        'role_t'
     ];
     public $incrementing = false;
     public $timestamps = true;
@@ -62,5 +63,10 @@ class Role extends Model
     {
         $lang = $this->language()->first();
         return $lang->lang;
+    }
+    protected function getRoleTAttribute()
+    {
+        $ug = $this->user_groups()->first();
+        return $ug->name;
     }
 }
