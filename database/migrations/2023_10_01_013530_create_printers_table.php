@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->cascadeOnUpdate()->nullOnDelete();
             $table->string('code', 20)->unique();
             $table->string('name', 100);
-            $table->smallInteger('status');
+            $table->smallInteger('status')->nullable();
+            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

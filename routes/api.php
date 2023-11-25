@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlarmController;
+use App\Http\Controllers\AlertController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PrinterController;
@@ -81,5 +82,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/alarm/create', [AlarmController::class, 'createAlarm']);
     Route::post('/alarm/update', [AlarmController::class, 'updateAlarm']);
     Route::post('/alarm/delete', [AlarmController::class, 'deleteAlarm']);
+
+    // Alerts
+    Route::get('/alerts', [AlertController::class, 'getAlerts']);
 });
 Route::post('auth/login', [UserController::class, 'loginUser']);

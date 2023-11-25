@@ -27,6 +27,9 @@ class Parameter extends Model
         "created_at",
         "updated_at",
     ];
+    protected $appends = [
+        'statuslang'
+    ];
     public $incrementing = false;
     public $timestamps = true;
 
@@ -44,5 +47,10 @@ class Parameter extends Model
     public function alarms(): HasMany
     {
         return $this->hasMany(Alarm::class, 'parameter_id', 'parameter_id');
+    }
+    protected function getStatusLangAttribute()
+    {
+        $lang = $this->language()->first();
+        return $lang->lang;
     }
 }

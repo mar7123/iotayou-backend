@@ -13,26 +13,26 @@ class LanguageSeeder extends Seeder
     public function run(): void
     {
         $langfunction = [
-            'yesno',
-            'yesno',
-            null,
+            'alarm',
+            'alarm',
+            'alarm',
             null,
             null,
             'active',
             'active',
         ];
         $lang = [
-            'yes',
-            'no',
-            'reserved',
+            'issued',
+            'acknowledged',
+            'solved',
             'reserved',
             'reserved',
             'active',
             'inactive',
         ];
         $badge = [
-            'success',
-            'danger',
+            null,
+            null,
             null,
             null,
             null,

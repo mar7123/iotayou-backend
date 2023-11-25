@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name', 50);
             $table->string('salt', 100)->nullable();
             $table->string('password', 100);
-            $table->smallInteger('status')->default(6);
-            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->smallInteger('status')->default(6)->nullable();
+            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->uuid('user_role_id');

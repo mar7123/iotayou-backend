@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('code', 20)->unique();
             $table->string('name', 60);
             $table->text('address');
-            $table->smallInteger('status')->default(6);
-            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->smallInteger('status')->default(6)->nullable();
+            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->nullOnDelete();
             $table->text('notes')->nullable();
             $table->integer('role_type');
             $table->foreign('role_type')->references('user_group_id')->on('user_groups')->cascadeOnUpdate()->cascadeOnDelete();

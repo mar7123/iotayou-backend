@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('name', 50);
             $table->text('address', 100)->nullable();
             $table->string('location', 100);
-            $table->smallInteger('status')->default(6);
-            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->smallInteger('status')->default(6)->nullable();
+            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();

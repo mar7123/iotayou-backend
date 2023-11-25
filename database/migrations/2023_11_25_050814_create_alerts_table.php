@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parameters', function (Blueprint $table) {
-            $table->uuid('parameter_id')->primary();
-            $table->uuid('instrument_id')->nullable();
-            $table->foreign('instrument_id')->references('instrument_id')->on('instruments')->cascadeOnUpdate()->nullOnDelete();
-            $table->string('code', 20)->unique();
+        Schema::create('alerts', function (Blueprint $table) {
+            $table->integer('alert_id')->autoIncrement();
+            $table->string('code', 20);
             $table->string('name', 50);
+            $table->string('site_name', 50);
+            $table->string('printer_name', 50);
             $table->smallInteger('status')->nullable();
             $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->nullOnDelete();
-            $table->text('notes')->nullable();
+            $table->timestamp('occured_at')->nullable();
+            $table->timestamp('solved_at')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('parameters');
+        Schema::dropIfExists('alerts');
     }
 };

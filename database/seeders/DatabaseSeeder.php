@@ -27,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SiteSeeder::class);
         $this->call(AlarmSeeder::class);
         $this->call(PermissionSeeder::class);
+        $this->call(AlertSeeder::class);
     }
 }

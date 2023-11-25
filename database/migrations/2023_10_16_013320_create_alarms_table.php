@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreign('parameter_id')->references('parameter_id')->on('parameters')->cascadeOnDelete();
             $table->string('name', 50);
             $table->string('condition', 50);
-            $table->smallInteger('status');
+            $table->smallInteger('status')->nullable();
+            $table->foreign('status')->references('id')->on('languages')->cascadeOnUpdate()->nullOnDelete();
             $table->text('notes')->nullable();
             // $table->timestamp('occured_at')->nullable();
             // $table->timestamp('solved_at')->nullable();
