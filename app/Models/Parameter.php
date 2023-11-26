@@ -40,6 +40,10 @@ class Parameter extends Model
             ->withPivot(["alarm_id", "name", "condition", "status", "notes", "occured_at", "solved_at"])
             ->withTimestamps();
     }
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(Language::class, "status", "id");
+    }
     public function instruments(): BelongsTo
     {
         return $this->belongsTo(Instrument::class, "instrument_id", "instrument_id");
