@@ -250,7 +250,7 @@ class RoleController extends Controller
                 }
                 $perms[$rp["user_group_id"]] = ['role_permission' => $rp["role_permission"]];
             }
-            $role->user_permissions()->sync($perms);
+            $role->role_permissions()->sync($perms);
             activity()
                 ->causedBy($request->user())
                 ->performedOn($role)
@@ -300,6 +300,11 @@ class RoleController extends Controller
                 }
                 $result = $temp;
             }
+            if ($request->input('permission') == "true") {
+                foreach ($result as $rs) {
+                    $rs->load(['role_permissions']);
+                }
+            }
             return Response([
                 'status' => true,
                 'data' => $result,
@@ -338,6 +343,11 @@ class RoleController extends Controller
                     $temp = $temp->concat($ch);
                 }
                 $result = $temp;
+            }
+            if ($request->input('permission') == "true") {
+                foreach ($result as $rs) {
+                    $rs->load(['role_permissions']);
+                }
             }
             return Response([
                 'status' => true,
