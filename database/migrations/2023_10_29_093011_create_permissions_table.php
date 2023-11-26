@@ -15,9 +15,9 @@ return new class extends Migration
             $table->integer('permission_id')->autoIncrement();
             $table->integer('user_group');
             $table->foreign('user_group')->references('user_group_id')->on('user_groups')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->uuid('user');
-            $table->foreign('user')->references('user_id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('user_permission', 4);
+            $table->uuid('role');
+            $table->foreign('role')->references('role_id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('role_permission', 4);
             $table->timestamps();
         });
     }

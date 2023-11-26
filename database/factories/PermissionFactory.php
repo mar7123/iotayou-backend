@@ -30,7 +30,7 @@ class PermissionFactory extends Factory
             $delete = '-';
         }
         return [
-            'user_permission' => $view . $add . $edit . $delete
+            'role_permission' => $view . $add . $edit . $delete
         ];
     }
 }

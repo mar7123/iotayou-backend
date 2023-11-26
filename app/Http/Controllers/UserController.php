@@ -53,11 +53,12 @@ class UserController extends Controller
                 $success =  $user->createToken('Login Token', ['*'], $expiry)->plainTextToken;
 
                 // attach permission
-                $attach_ug = UserGroups::whereDoesntHave('user_permissions', function (Builder $query) use ($user) {
-                    $query->where('users.user_id', $user->user_id);
-                })->where('user_group_id', '>', $user->role()->first()->role_type)->pluck('user_group_id');
+                $role = $user->role()->first();
+                $attach_ug = UserGroups::whereDoesntHave('role_permissions', function (Builder $query) use ($role) {
+                    $query->where('roles.role_id', $role->role_id);
+                })->where('user_group_id', '>', $role->role_type)->pluck('user_group_id');
                 if (!empty($attach_ug)) {
-                    $user->user_permissions()->attach($attach_ug, ['user_permission' => '----']);
+                    $role->role_permissions()->attach($attach_ug, ['role_permission' => '----']);
                 }
 
                 // log
@@ -132,11 +133,11 @@ class UserController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user
-                ->user_permissions()
+            $permission = $req_role
+                ->role_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 1, 1) != "a") {
+            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -226,11 +227,11 @@ class UserController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user
-                ->user_permissions()
+            $permission = $req_role
+                ->role_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 2, 1) != "e") {
+            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -297,12 +298,12 @@ class UserController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user
-                ->user_permissions()
+            $permission = $req_role
+                ->role_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
 
-            if ($permission == null || substr($permission->pivot->user_permission, 3, 1) != "d") {
+            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -359,11 +360,6 @@ class UserController extends Controller
                 $user_temp = $user_temp->concat($us);
             }
             $users = $users->concat($user_temp);
-            if ($request->input('permission') == "true") {
-                foreach ($users as $us) {
-                    $us->load(['user_permissions']);
-                }
-            }
             return Response([
                 'status' => true,
                 'data' => $users,
@@ -407,52 +403,10 @@ class UserController extends Controller
                 $user_temp = $user_temp->concat($us);
             }
             $users = $users->concat($user_temp);
-            $logs = Activity::whereIn('causer_id', $users)->get();
+            $logs = Activity::whereIn('causer_id', $users)->simplePaginate(25);
             return Response([
                 'status' => true,
                 'data' => $logs,
-            ], 200);
-        } catch (Throwable $th) {
-            return Response([
-                'status' => false,
-                'message' => $th->getMessage()
-            ], 500);
-        }
-    }
-    public function assignUserPermission(Request $request): Response
-    {
-        try {
-            $validateUser = Validator::make($request->all(), [
-                'user_id' => 'required|uuid|exists:users,user_id',
-                'user_permissions' => 'required|array',
-                'user_permissions.*.user_group_id' => 'required|exists:user_groups,user_group_id',
-                'user_permissions.*.user_permission' => 'required|alpha_dash|size:4',
-            ]);
-            if ($validateUser->fails()) {
-                return Response([
-                    'message' => 'validation error',
-                    'errors' => $validateUser->errors()
-                ], 401);
-            }
-            $user = User::where('user_id', $request->user_id)->first();
-            $role = $user->role()->first();
-            $perms = array();
-            foreach($request->user_permissions as $up){
-                if($up["user_group_id"] <= $role["role_type"]){
-                    continue;
-                }
-                $perms[$up["user_group_id"]] = ['user_permission' => $up["user_permission"]];
-            }
-            $user->user_permissions()->sync($perms);
-            activity()
-                ->causedBy($request->user())
-                ->performedOn($user)
-                ->withProperties($perms)
-                ->event('updated')
-                ->log('update permission');
-            return Response([
-                'status' => true,
-                'data' => "permission updated",
             ], 200);
         } catch (Throwable $th) {
             return Response([

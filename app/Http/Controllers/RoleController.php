@@ -37,11 +37,11 @@ class RoleController extends Controller
                 ->first();
             $req_role_id = $parent->role_id;
             $req_role_type = $parent->role_type;
-            $permission = $req_user
-                ->user_permissions()
+            $permission = $parent
+                ->role_permissions()
                 ->where('user_group_id', $request->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 1, 1) != "a") {
+            if ($permission == null || substr($permission->pivot->role_permission, 1, 1) != "a") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -139,11 +139,11 @@ class RoleController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user
-                ->user_permissions()
+            $permission = $req_role
+                ->role_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 2, 1) != "e") {
+            if ($permission == null || substr($permission->pivot->role_permission, 2, 1) != "e") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -199,11 +199,11 @@ class RoleController extends Controller
                     'message' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user
-                ->user_permissions()
+            $permission = $req_role
+                ->role_permissions()
                 ->where('user_group_id', $role->role_type)
                 ->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 3, 1) != "d") {
+            if ($permission == null || substr($permission->pivot->role_permission, 3, 1) != "d") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -227,6 +227,47 @@ class RoleController extends Controller
             ], 500);
         }
     }
+    public function assignRolePermission(Request $request): Response
+    {
+        try {
+            $validateUser = Validator::make($request->all(), [
+                'role_id' => 'required|uuid|exists:roles,role_id',
+                'role_permissions' => 'required|array',
+                'role_permissions.*.user_group_id' => 'required|exists:user_groups,user_group_id',
+                'role_permissions.*.role_permission' => 'required|alpha_dash|size:4',
+            ]);
+            if ($validateUser->fails()) {
+                return Response([
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+            $role = Role::where('role_id', $request->role_id)->first();
+            $perms = array();
+            foreach ($request->role_permissions as $rp) {
+                if ($rp["user_group_id"] <= $role->role_type) {
+                    continue;
+                }
+                $perms[$rp["user_group_id"]] = ['role_permission' => $rp["role_permission"]];
+            }
+            $role->user_permissions()->sync($perms);
+            activity()
+                ->causedBy($request->user())
+                ->performedOn($role)
+                ->withProperties($perms)
+                ->event('updated')
+                ->log('update permission');
+            return Response([
+                'status' => true,
+                'data' => "permission updated",
+            ], 200);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * USER CHILDREN
@@ -242,8 +283,8 @@ class RoleController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user->user_permissions()->where('user_group_id', 2)->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 0, 1) != "v") {
+            $permission = $req_role->role_permissions()->where('user_group_id', 2)->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
@@ -281,8 +322,8 @@ class RoleController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_user->user_permissions()->where('user_group_id', 3)->first();
-            if ($permission == null || substr($permission->pivot->user_permission, 0, 1) != "v") {
+            $permission = $req_role->role_permissions()->where('user_group_id', 3)->first();
+            if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',

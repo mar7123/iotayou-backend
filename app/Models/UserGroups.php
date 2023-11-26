@@ -29,11 +29,11 @@ class UserGroups extends Model
     public $incrementing = true;
     public $timestamps = true;
 
-    public function user_permissions(): BelongsToMany
+    public function role_permissions(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'permissions', 'user_group', 'user')
+        return $this->belongsToMany(Role::class, 'permissions', 'user_group', 'role')
             ->using(Permission::class)
-            ->withPivot(['permission_id', 'user_permission'])
+            ->withPivot(['permission_id', 'role_permission'])
             ->withTimestamps();
     }
     public function roles(): HasMany
