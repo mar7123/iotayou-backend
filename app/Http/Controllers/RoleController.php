@@ -6,6 +6,7 @@ use App\Models\Role;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
@@ -272,6 +273,47 @@ class RoleController extends Controller
     /**
      * USER CHILDREN
      */
+    public function getChildren(Request $request): Response
+    {
+        try {
+            $req_user = $request->user();
+            $req_role = $req_user->role()->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', '<=', 3)->get();
+            if ($permission->first() == null) {
+                return Response([
+                    'status' => false,
+                    'data' => 'Unauthorized',
+                ], 401);
+            }
+            foreach ($permission as $pr) {
+                if (substr($pr->pivot->role_permission, 0, 1) != "v") {
+                    return Response([
+                        'status' => false,
+                        'data' => 'Unauthorized',
+                    ], 401);
+                }
+            }
+            $role_id = $req_role->role_id;
+            $take = 5;
+            $page = 1;
+            if ($request->input('take')) {
+                $take = $request->input('take');
+            }
+            if ($request->input('page')) {
+                $page = $request->input('page');
+            }
+            $result = DB::select("with RECURSIVE cte as (select * from roles where role_id='" . $role_id . "' union all select e.* from roles e inner join cte on e.parent_id=cte.role_id ) select * from cte LIMIT " . $take . " OFFSET " . ($page - 1) * $take . "");
+            return Response([
+                'status' => true,
+                'data' => $result,
+            ], 200);
+        } catch (Throwable $th) {
+            return Response([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
     public function getClients(Request $request): Response
     {
         try {

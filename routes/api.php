@@ -4,6 +4,7 @@ use App\Http\Controllers\AlarmController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\ParameterController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrinterController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SiteController;
@@ -50,7 +51,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/role/delete', [RoleController::class, 'deleteRole']);
     Route::get('/clients', [RoleController::class, 'getClients']);
     Route::get('/customers', [RoleController::class, 'getCustomers']);
-    Route::post('/role/permission', [RoleController::class, 'assignRolePermission']);
 
     // Site CRUD
     Route::post('/site/create', [SiteController::class, 'createSite']);
@@ -85,5 +85,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Alerts
     Route::get('/alerts', [AlertController::class, 'getAlerts']);
+
+    // Permission
+    Route::get('/children', [RoleController::class, 'getChildren']);
+    Route::post('/permission', [PermissionController::class, 'getPermissionByID']);
+    Route::post('/role/permission', [RoleController::class, 'assignRolePermission']);
 });
 Route::post('auth/login', [UserController::class, 'loginUser']);
