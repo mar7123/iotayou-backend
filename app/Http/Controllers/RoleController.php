@@ -278,7 +278,7 @@ class RoleController extends Controller
         try {
             $req_user = $request->user();
             $req_role = $req_user->role()->first();
-            $permission = $req_role->role_permissions()->where('user_group_id', '<=', 3)->get();
+            $permission = $req_role->role_permissions()->where('user_group_id', '<=', 4)->get();
             if ($permission->first() == null) {
                 return Response([
                     'status' => false,
@@ -319,13 +319,13 @@ class RoleController extends Controller
         try {
             $req_user = $request->user();
             $req_role = $req_user->role()->first();
-            if ($req_role->role_type > 1) {
+            if ($req_role->role_type > 2) {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role->role_permissions()->where('user_group_id', 2)->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', 3)->first();
             if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
@@ -363,13 +363,13 @@ class RoleController extends Controller
         try {
             $req_user = $request->user();
             $req_role = $req_user->role()->first();
-            if ($req_role->role_type > 2) {
+            if ($req_role->role_type > 3) {
                 return Response([
                     'status' => false,
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            $permission = $req_role->role_permissions()->where('user_group_id', 3)->first();
+            $permission = $req_role->role_permissions()->where('user_group_id', 4)->first();
             if ($permission == null || substr($permission->pivot->role_permission, 0, 1) != "v") {
                 return Response([
                     'status' => false,
@@ -377,7 +377,7 @@ class RoleController extends Controller
                 ], 401);
             }
             $result = $req_role->children()->get();
-            while ($result->first()->role_type != 3) {
+            while ($result->first()->role_type != 4) {
                 $temp = new Collection();
                 foreach ($result as $rs) {
                     $ch = $rs->children()
