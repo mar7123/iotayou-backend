@@ -244,6 +244,16 @@ class RoleController extends Controller
                 ], 401);
             }
             $role = Role::where('role_id', $request->role_id)->first();
+            $req_user = $request->user();
+            $req_role = $req_user
+                ->role()
+                ->first();
+            if ($role->role_id == $req_role->role_id) {
+                return Response([
+                    'status' => false,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
             $perms = array();
             foreach ($request->role_permissions as $rp) {
                 if ($rp["user_group_id"] <= $role->role_type) {
