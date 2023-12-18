@@ -16,12 +16,12 @@ class SiteSeeder extends Seeder
         $roles = \App\Models\Role::where('role_type', 3)->get();
         $instruments = \App\Models\Instrument::get();
         foreach ($roles as $cu) {
-            \App\Models\Site::factory(2)
+            \App\Models\Site::factory(1)
                 ->state(new Sequence(
                     ['customer_id' => $cu->role_id]
                 ))
                 ->has(
-                    \App\Models\Printer::factory((3))
+                    \App\Models\Printer::factory((2))
                         ->state(new Sequence(
                             fn ($sequence) => [
                                 'site_id' => function ($site) {
