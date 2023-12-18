@@ -278,7 +278,7 @@ class RoleController extends Controller
         try {
             $req_user = $request->user();
             $req_role = $req_user->role()->first();
-            $permission = $req_role->role_permissions()->where('user_group_id', '<=', 4)->get();
+            $permission = $req_role->role_permissions()->where('user_group_id', '<=', 3)->get();
             if ($permission->first() == null) {
                 return Response([
                     'status' => false,
