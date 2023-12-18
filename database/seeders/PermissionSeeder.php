@@ -34,18 +34,6 @@ class PermissionSeeder extends Seeder
                 ])
                 ->create();
         }
-        $demo = \App\Models\Role::where('code', 'demo')->first();
-        $dem_user_group = $user_group_id->where('user_group_id', '>', $demo->role_type);
-        foreach ($dem_user_group as $dug) {
-            \App\Models\Permission::factory()
-                ->count(1)
-                ->state([
-                    'role' => $demo->role_id,
-                    'user_group' => $dug->user_group_id,
-                    'role_permission' => 'v---',
-                ])
-                ->create();
-        }
         $roles = \App\Models\Role::where('code', '!=', 'admin')->get();
         foreach ($roles as $rl) {
             $usr_group = $user_group_id->where('user_group_id', '>', $rl->role_type);

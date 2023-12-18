@@ -33,7 +33,7 @@ class SiteController extends Controller
                 ], 401);
             }
             $result = $req_role->children()->get();
-            while ($result->first()->role_type != 4) {
+            while ($result->first()->role_type != 3) {
                 $temp = new Collection();
                 foreach ($result as $rs) {
                     $ch = $rs->children()
@@ -94,7 +94,7 @@ class SiteController extends Controller
                     'data' => 'Unauthorized',
                 ], 401);
             }
-            if ($parent->role_type != 4) {
+            if ($parent->role_type != 3) {
                 $validateParent = Validator::make($request->all(), [
                     'customer_id' => 'required|uuid|exists:roles,role_id'
                 ]);

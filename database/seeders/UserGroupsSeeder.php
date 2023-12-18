@@ -13,7 +13,6 @@ class UserGroupsSeeder extends Seeder
     {
         $name = [
             'Super Admin',
-            'Demo',
             'Client',
             'Customer',
             'Site',
@@ -24,7 +23,6 @@ class UserGroupsSeeder extends Seeder
         ];
         $icon = [
             'admin.png',
-            'prod_man.png',
             'prod_man.png',
             'main_man.png',
             'prod_sup.png',
@@ -42,11 +40,9 @@ class UserGroupsSeeder extends Seeder
             '/dashboard',
             '/dashboard',
             '/dashboard',
-            '/dashboard',
         ];
         $group_code = [
             'sa',
-            'dem',
             'cl',
             'cu',
             'si',

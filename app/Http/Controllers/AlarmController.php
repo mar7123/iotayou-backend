@@ -32,7 +32,7 @@ class AlarmController extends Controller
                 ], 401);
             }
             $result = $req_role->children()->get();
-            while ($result->first()->role_type != 4) {
+            while ($result->first()->role_type != 3) {
                 $temp = new Collection();
                 foreach ($result as $rs) {
                     $ch = $rs->children()

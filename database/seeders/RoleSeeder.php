@@ -19,13 +19,6 @@ class RoleSeeder extends Seeder
             'notes' => 'This is Admin',
             'role_type' => 1
         ]);
-        \App\Models\Role::create([
-            'code' => 'demo',
-            'name' => 'demo demo',
-            'address' => 'Jupiter',
-            'notes' => 'This is Demo',
-            'role_type' => 2
-        ]);
         for ($i = 0; $i < 10; $i++) {
             \App\Models\Role::factory(1)->create();
         }

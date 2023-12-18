@@ -337,7 +337,7 @@ class UserController extends Controller
                 ->first();
             $result = $req_role->children()->get();
             $users = new Collection();
-            while ($result->first()->role_type != 4) {
+            while ($result->first()->role_type != 3) {
                 $user_temp = new Collection();
                 foreach ($result as $rs) {
                     $us = $rs->users()
@@ -380,7 +380,7 @@ class UserController extends Controller
                 ->first();
             $result = $req_role->children()->get();
             $users = new Collection([$req_user->user_id]);
-            while ($result->first()->role_type != 4) {
+            while ($result->first()->role_type != 3) {
                 $user_temp = new Collection();
                 foreach ($result as $rs) {
                     $us = $rs->users()
